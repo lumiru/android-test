@@ -1,0 +1,13 @@
+<resources>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Identifiant</string>
+    <string name="prompt_password">Mot de passe</string>
+    <string name="action_sign_in">Connexion</string>
+    <string name="action_sign_in_short">Connexion</string>
+
+    <string name="error_invalid_email">L\'identifiant est invalide</string>
+    <string name="error_invalid_password">Le mot de passe est invalide</string>
+    <string name="error_incorrect_password">Le mot de passe est incorrect</string>
+    <string name="error_field_required">Ce champ est obligatoire</string>
+</resources>
