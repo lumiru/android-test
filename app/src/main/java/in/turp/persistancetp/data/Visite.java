@@ -16,10 +16,10 @@ public class Visite implements Data {
     private Date dateVisite;
     private boolean isRealisee;
     private Date dateCloture;
-    private int magasinId;
-    private Magasin magasin;
-    private int clientId;
-    private Client client;
+    private int magasin;
+    //private Magasin magasin;
+    private int client;
+    private Client clientObject;
 
     public int getId() {
         return id;
@@ -61,7 +61,7 @@ public class Visite implements Data {
         this.dateVisite = dateVisite;
     }
 
-    public boolean isRealisee() {
+    public boolean getIsRealisee() {
         return isRealisee;
     }
 
@@ -77,16 +77,16 @@ public class Visite implements Data {
         this.dateCloture = dateCloture;
     }
 
-    public int getMagasinId() {
-        return magasinId;
+    public int getMagasin() {
+        return magasin;
     }
 
-    public void setMagasinId(int magasinId) {
-        this.magasinId = magasinId;
-        magasin = null;
+    public void setMagasin(int magasinId) {
+        this.magasin = magasinId;
+        //magasin = null;
     }
 
-    public Magasin getMagasin() {
+    /*public Magasin getMagasin() {
         //if(magasin == null && magasinId > 0) {
         //    magasin = ;
         //}
@@ -96,30 +96,30 @@ public class Visite implements Data {
     public void setMagasin(Magasin magasin) {
         this.magasin = magasin;
         magasinId = magasin.getId();
-    }
+    }*/
 
-    public int getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(int clientId) {
-        this.clientId = clientId;
-        client = null;
-    }
-
-    public Client getClient() {
-        //if(client == null && clientId > 0) {
-        //    client = ;
-        //}
+    public int getClient() {
         return client;
     }
 
-    public void setClient(Client client) {
-        this.client = client;
-        clientId = client.getId();
+    public void setClient(int clientId) {
+        this.client = clientId;
+        //client = null;
     }
 
-    public boolean isSupprime() {
+    public Client getClientObject() {
+        //if(client == null && clientId > 0) {
+        //    client = ;
+        //}
+        return clientObject;
+    }
+
+    public void setClientObject(Client client) {
+        this.clientObject = client;
+        this.client = client.getId();
+    }
+
+    public boolean getSupprime() {
         return supprime;
     }
 

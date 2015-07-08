@@ -35,7 +35,7 @@ public class VisiteListAdapter extends ArrayAdapter<Visite> {
         Visite visite = getItem( position );
 
         TextView label = (TextView) convertView.findViewById(R.id.visite_item_label);
-        label.setText(visite.getClient().getNom());
+        label.setText(visite.getClientObject().getNom());
 
         TextView description = (TextView) convertView.findViewById(R.id.visite_item_ville);
         description.setText(visite.getDateVisite().toString());

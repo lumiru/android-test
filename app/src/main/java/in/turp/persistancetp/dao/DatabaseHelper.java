@@ -22,9 +22,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "adresse TEXT," +
                 "code_postal TEXT," +
                 "ville TEXT," +
-                "telephone TEXT," +
-                "fax TEXT," +
-                "enseigne_id INTEGER," +
+                "numero_telephone TEXT," +
+                "numero_fax TEXT," +
+                "enseigne INTEGER," +
                 "date_modification TEXT" +
                 ");");
         db.execSQL("CREATE TABLE IF NOT EXISTS visite (" +
@@ -36,9 +36,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "date_visite TEXT," +
                 "is_realisee INTEGER," +
                 "date_cloture TEXT," +
-                "magasin_id INTEGER," +
-                "utilisateur_id INTEGER," +
-                "client_id INTEGER" +
+                "magasin INTEGER," +
+                "client INTEGER" +
                 ");");
         db.execSQL("CREATE TABLE IF NOT EXISTS releveproduit (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -51,7 +50,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "is_valide INTEGER," +
                 "produit_id INTEGER," +
                 "visite_id INTEGER," +
-                "date_modification TEXT," +
+                "date_modification TEXT" +
                 ");");
         db.execSQL("CREATE TABLE IF NOT EXISTS enseigne (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -70,8 +69,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ");");
         db.execSQL("CREATE TABLE IF NOT EXISTS assortiment (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "produit_id INTEGER," +
-                "frontvente_id INTEGER," +
+                "produit INTEGER," +
+                "frontvente INTEGER," +
                 "date TEXT," +
                 "date_dereferencement TEXT" +
                 ");");

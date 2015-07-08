@@ -9,14 +9,13 @@ import in.turp.persistancetp.dao.Data;
  */
 public class Magasin implements Data {
     private int id;
-    private int enseigneId;
-    private Enseigne enseigne;
+    private int enseigne;
     private String nom;
     private String adresse;
     private String codePostal;
     private String ville;
-    private String telephone;
-    private String fax;
+    private String numeroTelephone;
+    private String numeroFax;
     private Date dateModification;
 
     public int getId() {
@@ -27,26 +26,26 @@ public class Magasin implements Data {
         this.id = id;
     }
 
-    public int getEnseigneId() {
-        return enseigneId;
+    public int getEnseigne() {
+        return enseigne;
     }
 
-    public void setEnseigneId(int enseigneId) {
-        enseigne = null;
-        this.enseigneId = enseigneId;
+    public void setEnseigne(int enseigneId) {
+        // enseigne = null;
+        this.enseigne = enseigneId;
     }
 
-    public Enseigne getEnseigne() {
-        //if(enseigne == null && enseigneId > 0) {
+    /*public Enseigne getEnseigne() {
+        //if(enseigne == null && enseigne > 0) {
         //    enseigne = ;
         //}
         return enseigne;
     }
 
     public void setEnseigne(Enseigne enseigne) {
-        enseigneId = enseigne.getId();
+        enseigne = enseigne.getId();
         this.enseigne = enseigne;
-    }
+    }*/
 
     public String getNom() {
         return nom;
@@ -80,20 +79,20 @@ public class Magasin implements Data {
         this.ville = ville;
     }
 
-    public String getTelephone() {
-        return telephone;
+    public String getNumeroTelephone() {
+        return numeroTelephone;
     }
 
-    public void setTelephone(String telephone) {
-        this.telephone = telephone;
+    public void setNumeroTelephone(String numeroTelephone) {
+        this.numeroTelephone = numeroTelephone;
     }
 
-    public String getFax() {
-        return fax;
+    public String getNumeroFax() {
+        return numeroFax;
     }
 
-    public void setFax(String fax) {
-        this.fax = fax;
+    public void setNumeroFax(String numeroFax) {
+        this.numeroFax = numeroFax;
     }
 
     public Date getDateModification() {

@@ -113,7 +113,7 @@ public class ReleveProduit implements Data {
         this.wid = wid;
     }
 
-    public boolean isSupprime() {
+    public boolean getSupprime() {
         return supprime;
     }
 

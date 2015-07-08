@@ -2,7 +2,6 @@ package in.turp.persistancetp;
 
 import android.app.ListActivity;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,7 +13,6 @@ import android.widget.Toast;
 import java.util.List;
 
 import in.turp.persistancetp.dao.DAO;
-import in.turp.persistancetp.dao.DatabaseHelper;
 import in.turp.persistancetp.data.Magasin;
 import in.turp.persistancetp.view.MagasinListAdapter;
 
@@ -27,22 +25,7 @@ public class MagasinActivity extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        DatabaseHelper helper = new DatabaseHelper(getApplicationContext());
-        SQLiteDatabase db = helper.getWritableDatabase();
-        helper.onUpgrade(db, 0, 0);
-
         DAO<Magasin> dao = new DAO<>(getApplicationContext(), Magasin.class);
-
-        Magasin magasin = new Magasin();
-        magasin.setNom("E. Leclerc");
-        magasin.setAdresse("Là-bas");
-        magasin.setCodePostal("53000");
-        magasin.setVille("Laval");
-        magasin.setTelephone("0202020202");
-        magasin.setFax("0303030303");
-        magasin.setEnseigneId(1);
-        dao.save(magasin);
-
         List<Magasin> magasins = dao.getAll();
         if(magasins.size() == 0) {
             Toast toast = Toast.makeText(this, NO_DATA_MSG, Toast.LENGTH_LONG);

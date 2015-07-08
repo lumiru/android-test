@@ -9,10 +9,10 @@ import in.turp.persistancetp.dao.Data;
  */
 public class Assortiment implements Data {
     private int id;
-    private int produitId;
-    private Produit produit;
-    private int frontventeId;
-    private FrontVente frontvente;
+    private int produit;
+    //private Produit produit;
+    private int frontvente;
+    //private FrontVente frontvente;
     private Date date;
     private Data dateDereferencement;
 
@@ -26,40 +26,20 @@ public class Assortiment implements Data {
         this.id = id;
     }
 
-    public int getProduitId() {
-        return produitId;
-    }
-
-    public void setProduitId(int produitId) {
-        this.produitId = produitId;
-        produit = null;
-    }
-
-    public Produit getProduit() {
+    public int getProduit() {
         return produit;
     }
 
-    public void setProduit(Produit produit) {
+    public void setProduit(int produit) {
         this.produit = produit;
-        produitId = produit.getId();
     }
 
-    public int getFrontventeId() {
-        return frontventeId;
-    }
-
-    public void setFrontventeId(int frontventeId) {
-        this.frontventeId = frontventeId;
-        frontvente = null;
-    }
-
-    public FrontVente getFrontvente() {
+    public int getFrontvente() {
         return frontvente;
     }
 
-    public void setFrontvente(FrontVente frontvente) {
+    public void setFrontvente(int frontvente) {
         this.frontvente = frontvente;
-        frontventeId = frontvente.getId();
     }
 
     public Date getDate() {

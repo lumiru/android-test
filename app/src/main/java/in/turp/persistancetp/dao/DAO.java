@@ -67,9 +67,13 @@ public class DAO<T extends Data> {
     }
 
     public <V> List<T> get(String selector, V value) {
+        return get(selector, "=", value);
+    }
+
+    public <V> List<T> get(String selector, String operator, V value) {
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor cursor = db.query(tableName, colNames,
-                selector.replaceAll("([A-Z])", "_$1").toLowerCase() + " = ?",
+                selector.replaceAll("([A-Z])", "_$1").toLowerCase() + " " + operator + " ?",
                 new String[]{String.valueOf(value)},
                 null, null, null);
 
@@ -108,7 +112,7 @@ public class DAO<T extends Data> {
     }
 
     public void save(T object) {
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db;
         ContentValues values = null;
         try {
             values = buildRow(object);
@@ -121,12 +125,16 @@ public class DAO<T extends Data> {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-        if(object.getId() > 0) {
+        if(object.getId() > 0 && get(object.getId()) != null) {
+            db = helper.getWritableDatabase();
             db.update(tableName, values,
                     "id = ?", new String[]{String.valueOf(object.getId())});
+            db.close();
         }
         else {
+            db = helper.getWritableDatabase();
             int id = (int) db.insert(tableName, "id", values);
+            db.close();
 
             if(id <= 0) {
                 throw new Error("Error when inserting " + tableName + " object in database");
@@ -173,8 +181,10 @@ public class DAO<T extends Data> {
                 method.invoke(object, cursor.getString(i));
             }
             else if(fieldType == Date.class) {
-                DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.FRANCE);
-                method.invoke(object, df.parse(cursor.getString(i)));
+                if(!cursor.isNull(i)) {
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.FRANCE);
+                    method.invoke(object, df.parse(cursor.getString(i)));
+                }
             }
         }
 
@@ -194,7 +204,16 @@ public class DAO<T extends Data> {
             methodName = "get" + attrName.substring(0, 1).toUpperCase() + attrName.substring(1);
             method = klass.getMethod(methodName);
 
-            values.put(colName, String.valueOf(method.invoke(object, new Object[]{})));
+            Object value = method.invoke(object);
+            if(value != null) {
+                if(value instanceof Date) {
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.FRANCE);
+                    values.put(colName, df.format(value));
+                }
+                else {
+                    values.put(colName, String.valueOf(value));
+                }
+            }
         }
 
         return values;

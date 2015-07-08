@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -26,6 +27,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,10 +38,17 @@ import java.util.List;
 import java.util.Locale;
 
 import in.turp.persistancetp.dao.DAO;
+import in.turp.persistancetp.dao.DatabaseHelper;
+import in.turp.persistancetp.data.Magasin;
+import in.turp.persistancetp.data.ReleveProduit;
+import in.turp.persistancetp.data.Visite;
 import in.turp.persistancetp.service.AuthService;
+import in.turp.persistancetp.service.ExportService;
 import in.turp.persistancetp.service.ImportService;
+import in.turp.persistancetp.util.DateTypeAdapter;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
+import retrofit.converter.GsonConverter;
 
 
 /**
@@ -78,7 +90,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             // S'il y a une erreur (ou si c'est ok),
             // on considère que l'utilisateur peut continuer sur les données locales
             else {
-                startMainActivity();
+                //startMainActivity();
+                init();
             }
         }
     }
@@ -176,12 +189,10 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     }
 
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
         return email.length() > 4;
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
         return password.length() > 4;
     }
 
@@ -280,17 +291,27 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         startActivity(intent);
     }
 
-    private byte authenticate(String login, String password) {
+    private <T> T getRestService(Class<T> klass) {
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .registerTypeAdapter(Date.class, new DateTypeAdapter())
+                .create();
+
         RestAdapter adapter = new RestAdapter.Builder()
-                .setEndpoint("http://192.168.214.13:8000")
+                .setEndpoint(getString(R.string.webserver_url))
+                .setConverter(new GsonConverter(gson))
                 .build();
 
-        AuthService service = adapter.create(AuthService.class);
+        return adapter.create(klass);
+    }
+
+    private byte authenticate(String login, String password) {
+        AuthService service = getRestService(AuthService.class);
         String token;
 
         try {
             AuthService.AccessToken response = service.login(new AuthService.Utilisateur(login, password));
-            token = "Bearer " + response.getToken();
+            token = "token " + response.getToken();
         }
         catch (RetrofitError e) {
             if(e.getResponse() != null && e.getResponse().getStatus() == 400) {
@@ -310,41 +331,71 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         editor.putString(getString(R.string.password_key), password);
         editor.putString(getString(R.string.access_token), token);
 
-        updateDatabase(prefs, editor, token);
+        // FIXME truc
+        /*DatabaseHelper helper = new DatabaseHelper(getApplicationContext());
+        SQLiteDatabase db = helper.getWritableDatabase();
+        helper.onUpgrade(db, 0, 0);*/
+
+        String lastUpdate = /*prefs.getString(getString(R.string.last_update_key), */"1901-01-01T00:00:00";//);
+        if(updateDatabase(lastUpdate, token)) {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd\'T\'hh:mm:ss", Locale.FRANCE);
+            editor.putString(getString(R.string.last_update_key), format.format(new Date()));
+        }
 
         editor.apply();
 
         return AUTHENTICATION_SUCCESS;
     }
 
-    private void updateDatabase(SharedPreferences prefs, SharedPreferences.Editor editor, String token) {
-        RestAdapter adapter = new RestAdapter.Builder()
-                .setEndpoint("http://192.168.214.13:8000")
-                .build();
-
-        ImportService service = adapter.create(ImportService.class);
-        String lastUpdate = prefs.getString(getString(R.string.last_update_key), "1901-01-01T00:00:00");
+    private boolean updateDatabase(String lastUpdate, String token) {
+        ExportService exportService = getRestService(ExportService.class);
+        ImportService importService = getRestService(ImportService.class);
+        String sqlLastUpdate = lastUpdate.replace('T', ' ');
 
         try {
-            DAO.save(getApplicationContext(), service.getLastMagasins(token, lastUpdate));
-            DAO.save(getApplicationContext(), service.getLastVisites(token, lastUpdate));
-            DAO.save(getApplicationContext(), service.getLastAssortiments(token, lastUpdate));
-            DAO.save(getApplicationContext(), service.getLastClients(token, lastUpdate));
-            DAO.save(getApplicationContext(), service.getLastEnseignes(token, lastUpdate));
-            DAO.save(getApplicationContext(), service.getLastFamilles(token, lastUpdate));
-            DAO.save(getApplicationContext(), service.getLastGammes(token, lastUpdate));
-            DAO.save(getApplicationContext(), service.getLastGroupes(token, lastUpdate));
-            DAO.save(getApplicationContext(), service.getLastProduits(token, lastUpdate));
-            DAO.save(getApplicationContext(), service.getLastRelevesProduit(token, lastUpdate));
+            // Get all data from last update
+            DAO<Magasin> magasinDAO = new DAO<>(getApplicationContext(), Magasin.class);
+            List<Magasin> magasins = magasinDAO.get("date_modification", ">", sqlLastUpdate);
+            if(magasins.size() > 0) {
+                exportService.save(token, magasins);
+            }
+
+            DAO<Visite> visiteDAO = new DAO<>(getApplicationContext(), Visite.class);
+            List<Visite> visites = visiteDAO.get("date_modification", ">", sqlLastUpdate);
+
+            for (Visite visite : visites) {
+                // TODO Get server Visite ID to update related local RelevesProduit
+                exportService.save(token, visite);
+            }
+
+            DAO<ReleveProduit> releveProduitDAO = new DAO<>(getApplicationContext(), ReleveProduit.class);
+            List<ReleveProduit> relevesProduit = releveProduitDAO.get("date_modification", ">", sqlLastUpdate);
+
+            for (ReleveProduit releveProduit : relevesProduit) {
+                exportService.save(token, releveProduit);
+            }
+
+            // Import all data
+            DAO.save(getApplicationContext(), importService.getLastMagasins(token, lastUpdate));
+            DAO.save(getApplicationContext(), importService.getLastVisites(token, lastUpdate));
+            DAO.save(getApplicationContext(), importService.getLastAssortiments(token, lastUpdate));
+            DAO.save(getApplicationContext(), importService.getLastClients(token, lastUpdate));
+            DAO.save(getApplicationContext(), importService.getLastEnseignes(token, lastUpdate));
+            DAO.save(getApplicationContext(), importService.getLastFamilles(token, lastUpdate));
+            DAO.save(getApplicationContext(), importService.getLastGammes(token, lastUpdate));
+            DAO.save(getApplicationContext(), importService.getLastGroupes(token, lastUpdate));
+            DAO.save(getApplicationContext(), importService.getLastProduits(token, lastUpdate));
+            DAO.save(getApplicationContext(), importService.getLastRelevesProduit(token, lastUpdate));
         }
         catch (RetrofitError e) {
-            // OK, on retentera plus tard
+            // OK, retry later
             e.printStackTrace();
-            return;
+            return false;
         }
 
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-ddThh:mm:ss", Locale.FRANCE);
-        editor.putString(getString(R.string.last_update_key), format.format(new Date()));
+        // TODO Remove all deleted data from local database
+
+        return true;
     }
 
     /**
