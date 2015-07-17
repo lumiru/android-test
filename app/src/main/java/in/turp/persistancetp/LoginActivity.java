@@ -332,9 +332,11 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         editor.putString(getString(R.string.access_token), token);
 
         // FIXME truc
-        /*DatabaseHelper helper = new DatabaseHelper(getApplicationContext());
+        //*
+        DatabaseHelper helper = new DatabaseHelper(getApplicationContext());
         SQLiteDatabase db = helper.getWritableDatabase();
-        helper.onUpgrade(db, 0, 0);*/
+        helper.onUpgrade(db, 0, 0);
+        /**/
 
         String lastUpdate = /*prefs.getString(getString(R.string.last_update_key), */"1901-01-01T00:00:00";//);
         if(updateDatabase(lastUpdate, token)) {

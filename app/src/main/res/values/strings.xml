@@ -11,5 +11,5 @@
     <string name="username_key">in.turp.persistancetp.USERNAME_KEY</string>
     <string name="password_key">in.turp.persistancetp.PASSWORD_KEY</string>
     <string name="last_update_key">in.turp.persistancetp.LAST_DB_UPDATE</string>
-    <string name="webserver_url">http://192.168.214.13:8000</string>
+    <string name="webserver_url">http://10.0.2.1:8000</string>
 </resources>

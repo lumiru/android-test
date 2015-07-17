@@ -35,10 +35,14 @@ public class VisiteListAdapter extends ArrayAdapter<Visite> {
         Visite visite = getItem( position );
 
         TextView label = (TextView) convertView.findViewById(R.id.visite_item_label);
-        label.setText(visite.getClientObject().getNom());
+        if(visite.getClientObject() != null) {
+            label.setText(visite.getClientObject().getNom());
+        }
 
         TextView description = (TextView) convertView.findViewById(R.id.visite_item_ville);
-        description.setText(visite.getDateVisite().toString());
+        if(visite.getDateVisite() != null) {
+            description.setText(visite.getDateVisite().toString());
+        }
 
         return convertView;
     }

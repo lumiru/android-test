@@ -104,7 +104,7 @@ public class Visite implements Data {
 
     public void setClient(int clientId) {
         this.client = clientId;
-        //client = null;
+        clientObject = null;
     }
 
     public Client getClientObject() {

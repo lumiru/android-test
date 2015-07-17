@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -71,30 +72,31 @@ public class DAO<T extends Data> {
     }
 
     public <V> List<T> get(String selector, String operator, V value) {
-        SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = db.query(tableName, colNames,
-                selector.replaceAll("([A-Z])", "_$1").toLowerCase() + " " + operator + " ?",
-                new String[]{String.valueOf(value)},
-                null, null, null);
+        return query(selector.replaceAll("([A-Z])", "_$1").toLowerCase() + " " + operator + " ?",
+                new String[]{String.valueOf(value)});
+    }
 
-        List<T> list = new ArrayList<>();
-        try {
-            while (cursor.moveToNext()) {
-                list.add(fill(cursor));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    public <V> List<T> getIn(String selector, V[] values) {
+        String[] placeholders = new String[values.length];
+        String[] stringValues = new String[values.length];
+        for (int i = values.length - 1; i >= 0; --i) {
+            placeholders[i] = "?";
+            stringValues[i] = String.valueOf(values[i]);
         }
-        finally {
-            db.close();
-        }
-
-        return list;
+        return query(
+                selector.replaceAll("([A-Z])", "_$1").toLowerCase() +
+                        " IN (" + TextUtils.join(",", placeholders) + ")",
+                stringValues);
     }
 
     public List<T> getAll() {
+        return query(null, null);
+    }
+
+    private List<T> query(String query, String[] values) {
         SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = db.query(tableName, colNames, null, null, null, null, null);
+        Cursor cursor = db.query(tableName, colNames,
+                query, values, null, null, null);
 
         List<T> list = new ArrayList<>();
         try {

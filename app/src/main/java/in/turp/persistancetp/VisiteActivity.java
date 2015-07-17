@@ -12,6 +12,7 @@ import android.widget.Toast;
 import java.util.List;
 
 import in.turp.persistancetp.dao.DAO;
+import in.turp.persistancetp.data.Client;
 import in.turp.persistancetp.data.Visite;
 import in.turp.persistancetp.view.VisiteListAdapter;
 
@@ -27,10 +28,26 @@ public class VisiteActivity extends ListActivity {
 
         DAO<Visite> dao = new DAO<Visite>(getApplicationContext(), Visite.class);
         int magasinId = getIntent().getIntExtra(EXTRA_MAGASIN_ID, 0);
-        List<Visite> visites = dao.get("magasin_id", magasinId);
+        List<Visite> visites = dao.get("magasin", magasinId);
         if(visites.size() == 0) {
             Toast toast = Toast.makeText(this, NO_DATA_MSG, Toast.LENGTH_LONG);
             toast.show();
+        }
+
+        Integer[] clientIds = new Integer[visites.size()];
+        for (int i = 0, visitesSize = visites.size(); i < visitesSize; i++) {
+            Visite v = visites.get(i);
+            clientIds[i] = v.getClient();
+        }
+
+        DAO<Client> clientDAO = new DAO<>(getApplicationContext(), Client.class);
+        List<Client> clients = clientDAO.getIn("id", clientIds);
+        for (Client c : clients) {
+            for (Visite v : visites) {
+                if(v.getClient() == c.getId()) {
+                    v.setClientObject(c);
+                }
+            }
         }
 
         ArrayAdapter adapter = new VisiteListAdapter(getApplicationContext(),
