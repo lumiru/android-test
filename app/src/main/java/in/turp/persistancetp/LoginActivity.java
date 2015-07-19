@@ -78,6 +78,11 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         );
         String username = prefs.getString(getString(R.string.username_key), "");
 
+        setContentView(R.layout.activity_login);
+
+        mLoginFormView = findViewById(R.id.login_form);
+        mProgressView = findViewById(R.id.login_progress);
+
         if(username != null && username.equals("")) {
             init();
         }
@@ -90,15 +95,16 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             // S'il y a une erreur (ou si c'est ok),
             // on considère que l'utilisateur peut continuer sur les données locales
             else {
+                showProgress(true);
+                mAuthTask = new UserLoginTask(username, password);
+                mAuthTask.execute((Void) null);
                 //startMainActivity();
-                init();
+                //init();
             }
         }
     }
 
     private void init() {
-        setContentView(R.layout.activity_login);
-
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
@@ -122,9 +128,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 attemptLogin();
             }
         });
-
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
     }
 
     private void populateAutoComplete() {
@@ -332,13 +335,13 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         editor.putString(getString(R.string.access_token), token);
 
         // FIXME truc
-        //*
+        /*
         DatabaseHelper helper = new DatabaseHelper(getApplicationContext());
         SQLiteDatabase db = helper.getWritableDatabase();
         helper.onUpgrade(db, 0, 0);
         /**/
 
-        String lastUpdate = /*prefs.getString(getString(R.string.last_update_key), */"1901-01-01T00:00:00";//);
+        String lastUpdate = prefs.getString(getString(R.string.last_update_key), "1901-01-01T00:00:00");
         if(updateDatabase(lastUpdate, token)) {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd\'T\'hh:mm:ss", Locale.FRANCE);
             editor.putString(getString(R.string.last_update_key), format.format(new Date()));

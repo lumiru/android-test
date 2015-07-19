@@ -10,8 +10,8 @@ public class Produit implements Data {
     private String nom;
     private String ean13;
     private int prix;
-    private int familleId;
-    private Famille famille;
+    private int famille;
+    // private Famille famille;
 
     @Override
     public int getId() {
@@ -47,21 +47,21 @@ public class Produit implements Data {
         this.prix = prix;
     }
 
-    public int getFamilleId() {
-        return familleId;
-    }
-
-    public void setFamilleId(int familleId) {
-        this.familleId = familleId;
-        famille = null;
-    }
-
-    public Famille getFamille() {
+    public int getFamille() {
         return famille;
     }
 
-    public void setFamille(Famille famille) {
+    public void setFamille(int famille) {
         this.famille = famille;
-        familleId = famille.getId();
+        // famille = null;
     }
+
+//    public Famille getFamille() {
+//        return famille;
+//    }
+//
+//    public void setFamille(Famille famille) {
+//        this.famille = famille;
+//        famille = famille.getId();
+//    }
 }

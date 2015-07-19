@@ -14,10 +14,10 @@ public class ReleveProduit implements Data {
     private int facing;
     private String approvisionnement;
     private boolean isValide;
-    private int produitId;
-    private Produit produit;
-    private int visiteId;
-    private Visite visite;
+    private int produit;
+    // private Produit produit;
+    private int visite;
+    // private Visite visite;
 
     @Override
     public int getId() {
@@ -61,6 +61,10 @@ public class ReleveProduit implements Data {
         this.approvisionnement = approvisionnement;
     }
 
+    public boolean getIsValide() {
+        return isValide;
+    }
+
     public boolean isValide() {
         return isValide;
     }
@@ -69,41 +73,41 @@ public class ReleveProduit implements Data {
         this.isValide = isValide;
     }
 
-    public int getProduitId() {
-        return produitId;
-    }
-
-    public void setProduitId(int produitId) {
-        this.produitId = produitId;
-        produit = null;
-    }
-
-    public Produit getProduit() {
+    public int getProduit() {
         return produit;
     }
 
-    public void setProduit(Produit produit) {
+    public void setProduit(int produit) {
         this.produit = produit;
-        produitId = produit.getId();
+        // produit = null;
     }
 
-    public int getVisiteId() {
-        return visiteId;
-    }
+//    public Produit getProduit() {
+//        return produit;
+//    }
+//
+//    public void setProduit(Produit produit) {
+//        this.produit = produit;
+//        produit = produit.getId();
+//    }
 
-    public void setVisiteId(int visiteId) {
-        this.visiteId = visiteId;
-        visite = null;
-    }
-
-    public Visite getVisite() {
+    public int getVisite() {
         return visite;
     }
 
-    public void setVisite(Visite visite) {
+    public void setVisite(int visite) {
         this.visite = visite;
-        visiteId = visite.getId();
+        // visite = null;
     }
+
+//    public Visite getVisite() {
+//        return visite;
+//    }
+//
+//    public void setVisite(Visite visite) {
+//        this.visite = visite;
+//        visite = visite.getId();
+//    }
 
     public int getWid() {
         return wid;

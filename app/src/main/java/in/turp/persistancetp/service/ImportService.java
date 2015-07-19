@@ -47,6 +47,6 @@ public interface ImportService {
     @GET("/commercial/produits/modified_after/{date}/")
     List<Produit> getLastProduits(@Header("Authorization") String token, @Path("date") String date);
 
-    @GET("/commercial/releves_produit/modified_after/{date}/")
+    @GET("/commercial/visite_releve_produit/modified_after/{date}/")
     List<ReleveProduit> getLastRelevesProduit(@Header("Authorization") String token, @Path("date") String date);
 }

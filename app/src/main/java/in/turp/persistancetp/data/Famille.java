@@ -8,10 +8,10 @@ import in.turp.persistancetp.dao.Data;
 public class Famille implements Data {
     private int id;
     private String libelle;
-    private int gammeId;
-    private Gamme gamme;
-    private int clientId;
-    private Client client;
+    private int gamme;
+    // private Gamme gamme;
+    private int client;
+    // private Client client;
 
     @Override
     public int getId() {
@@ -31,39 +31,39 @@ public class Famille implements Data {
         this.libelle = libelle;
     }
 
-    public int getGammeId() {
-        return gammeId;
-    }
-
-    public void setGammeId(int gammeId) {
-        this.gammeId = gammeId;
-        gamme = null;
-    }
-
-    public Gamme getGamme() {
+    public int getGamme() {
         return gamme;
     }
 
-    public void setGamme(Gamme gamme) {
+    public void setGamme(int gamme) {
         this.gamme = gamme;
-        gammeId = gamme.getId();
+        // gamme = null;
     }
 
-    public int getClientId() {
-        return clientId;
-    }
+//    public Gamme getGamme() {
+//        return gamme;
+//    }
+//
+//    public void setGamme(Gamme gamme) {
+//        this.gamme = gamme;
+//        gamme = gamme.getId();
+//    }
 
-    public void setClientId(int clientId) {
-        this.clientId = clientId;
-        client = null;
-    }
-
-    public Client getClient() {
+    public int getClient() {
         return client;
     }
 
-    public void setClient(Client client) {
+    public void setClient(int client) {
         this.client = client;
-        clientId = client.getId();
+        // client = null;
     }
+
+//    public Client getClient() {
+//        return client;
+//    }
+//
+//    public void setClient(Client client) {
+//        this.client = client;
+//        client = client.getId();
+//    }
 }

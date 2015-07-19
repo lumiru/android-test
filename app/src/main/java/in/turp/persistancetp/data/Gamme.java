@@ -8,8 +8,8 @@ import in.turp.persistancetp.dao.Data;
 public class Gamme implements Data {
     private int id;
     private String libelle;
-    private int clientId;
-    private Client client;
+    private int client;
+    // private Client client;
 
     @Override
     public int getId() {
@@ -29,21 +29,21 @@ public class Gamme implements Data {
         this.libelle = libelle;
     }
 
-    public int getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(int clientId) {
-        this.clientId = clientId;
-        client = null;
-    }
-
-    public Client getClient() {
+    public int getClient() {
         return client;
     }
 
-    public void setClient(Client client) {
+    public void setClient(int client) {
         this.client = client;
-        clientId = client.getId();
+        // client = null;
     }
+
+//    public Client getClient() {
+//        return client;
+//    }
+//
+//    public void setClient(Client client) {
+//        this.client = client;
+//        client = client.getId();
+//    }
 }

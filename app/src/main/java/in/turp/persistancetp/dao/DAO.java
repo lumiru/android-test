@@ -118,8 +118,6 @@ public class DAO<T extends Data> {
         ContentValues values = null;
         try {
             values = buildRow(object);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
@@ -193,7 +191,7 @@ public class DAO<T extends Data> {
         return object;
     }
 
-    private ContentValues buildRow(T object) throws NoSuchFieldException, NoSuchMethodException,
+    private ContentValues buildRow(T object) throws NoSuchMethodException,
             InvocationTargetException, IllegalAccessException {
         ContentValues values = new ContentValues();
         String colName, attrName, methodName;

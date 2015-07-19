@@ -8,8 +8,8 @@ import in.turp.persistancetp.dao.Data;
 public class Enseigne implements Data {
     private int id;
     private String nom;
-    private int groupeId;
-    private Groupe groupe;
+    private int groupe;
+    // private Groupe groupe;
 
     @Override
     public int getId() {
@@ -29,21 +29,21 @@ public class Enseigne implements Data {
         this.nom = nom;
     }
 
-    public int getGroupeId() {
-        return groupeId;
-    }
-
-    public void setGroupeId(int groupeId) {
-        this.groupeId = groupeId;
-        groupe = null;
-    }
-
-    public Groupe getGroupe() {
+    public int getGroupe() {
         return groupe;
     }
 
-    public void setGroupe(Groupe groupe) {
+    public void setGroupe(int groupe) {
         this.groupe = groupe;
-        groupeId = groupe.getId();
+        // groupe = null;
     }
+
+//    public Groupe getGroupe() {
+//        return groupe;
+//    }
+//
+//    public void setGroupe(Groupe groupe) {
+//        this.groupe = groupe;
+//        groupe = groupe.getId();
+//    }
 }

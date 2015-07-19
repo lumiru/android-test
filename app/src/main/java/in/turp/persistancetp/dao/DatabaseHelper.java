@@ -48,14 +48,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "facing INTEGER," +
                 "approvisionnement TEXT," +
                 "is_valide INTEGER," +
-                "produit_id INTEGER," +
-                "visite_id INTEGER," +
+                "produit INTEGER," +
+                "visite INTEGER," +
                 "date_modification TEXT" +
                 ");");
         db.execSQL("CREATE TABLE IF NOT EXISTS enseigne (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "nom TEXT," +
-                "groupe_id INTEGER" +
+                "groupe INTEGER" +
                 ");");
         db.execSQL("CREATE TABLE IF NOT EXISTS groupe (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -63,9 +63,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ");");
         db.execSQL("CREATE TABLE IF NOT EXISTS frontvente (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "magasin_id INTEGER," +
-                "utilisateur_id INTEGER," +
-                "client_id INTEGER" +
+                "magasin INTEGER," +
+                "utilisateur INTEGER," +
+                "client INTEGER" +
                 ");");
         db.execSQL("CREATE TABLE IF NOT EXISTS assortiment (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -79,18 +79,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "nom TEXT," +
                 "ean13 TEXT," +
                 "prix INTEGER," +
-                "famille_id INTEGER" +
+                "famille INTEGER" +
                 ");");
         db.execSQL("CREATE TABLE IF NOT EXISTS gamme (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "libelle TEXT," +
-                "client_id INTEGER" +
+                "client INTEGER" +
                 ");");
         db.execSQL("CREATE TABLE IF NOT EXISTS famille (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "libelle TEXT," +
-                "gamme_id INTEGER," +
-                "client_id INTEGER" +
+                "gamme INTEGER," +
+                "client INTEGER" +
                 ");");
         db.execSQL("CREATE TABLE IF NOT EXISTS client (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
