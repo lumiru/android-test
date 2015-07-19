@@ -34,21 +34,7 @@ public class VisiteActivity extends ListActivity {
             toast.show();
         }
 
-        Integer[] clientIds = new Integer[visites.size()];
-        for (int i = 0, visitesSize = visites.size(); i < visitesSize; i++) {
-            Visite v = visites.get(i);
-            clientIds[i] = v.getClient();
-        }
-
-        DAO<Client> clientDAO = new DAO<>(getApplicationContext(), Client.class);
-        List<Client> clients = clientDAO.getIn("id", clientIds);
-        for (Client c : clients) {
-            for (Visite v : visites) {
-                if(v.getClient() == c.getId()) {
-                    v.setClientObject(c);
-                }
-            }
-        }
+        dao.loadAssociation(visites, "client");
 
         ArrayAdapter adapter = new VisiteListAdapter(getApplicationContext(),
                 ROW_LAYOUT, visites);

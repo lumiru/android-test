@@ -28,12 +28,14 @@ import in.turp.persistancetp.data.FrontVente;
  */
 public class DAO<T extends Data> {
     private DatabaseHelper helper;
+    private Context context;
     private String tableName;
     private String[] fieldNames;
     private String[] colNames;
     private Class<T> klass;
 
     public DAO(Context context, Class<T> klass) {
+        this.context = context;
         helper = new DatabaseHelper(context);
         this.klass = klass;
         tableName = klass.getSimpleName().toLowerCase();
@@ -217,6 +219,43 @@ public class DAO<T extends Data> {
         }
 
         return values;
+    }
+
+    public List<T> loadAssociation(List<T> list, String associationFieldName) {
+        try {
+            String baseMethodName = associationFieldName.substring(0, 1).toUpperCase() + associationFieldName.substring(1);
+            Method getMethod = klass.getMethod("get" + baseMethodName);
+            Integer[] ids = new Integer[list.size()];
+            T v;
+            for (int i = 0, visitesSize = list.size(); i < visitesSize; i++) {
+                v = list.get(i);
+                    ids[i] = (Integer) getMethod.invoke(v);
+            }
+
+            Method getObject = klass.getMethod("get" + baseMethodName + "Object");
+            Class<? extends Data> fieldType = (Class<? extends Data>) getObject.getReturnType();
+            Method setMethod = klass.getMethod("set" + baseMethodName + "Object", fieldType);
+            DAO<?> dao = new DAO<>(context, fieldType);
+            List<? extends Data> clients = dao.getIn("id", ids);
+            for (Data c : clients) {
+                for (T o : list) {
+                    if((int) getMethod.invoke(o) == c.getId()) {
+                        setMethod.invoke(o, c);
+                    }
+                }
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            return null;
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+            return null;
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return list;
     }
 
     public static <E extends Data> DAO<E> getDAO(Context context, Class<E> klass) {
