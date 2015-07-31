@@ -52,13 +52,20 @@ public class DAO<T extends Data> {
         colNames = colList.toArray(new String[colList.size()]);
     }
 
+    /**
+     * Get a database object from its ID.
+     * @param id The ID of the object
+     * @return The loaded object
+     */
     public T get(int id) {
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor cursor = db.query(tableName, colNames,
                 "id = ?", new String[]{String.valueOf(id)}, null, null, null);
 
         try {
-            return fill(cursor);
+            if(cursor.moveToFirst()) {
+                return fill(cursor);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -69,15 +76,37 @@ public class DAO<T extends Data> {
         return null;
     }
 
+    /**
+     * Get database objects from the value of a field
+     * @param selector The field to use
+     * @param value The requested value
+     * @param <V> The requested value type
+     * @return The loaded objects
+     */
     public <V> List<T> get(String selector, V value) {
         return get(selector, "=", value);
     }
 
+    /**
+     * Get database objects from the value of a field
+     * @param selector The field to use
+     * @param operator The operator to select corresponding values
+     * @param value The requested value
+     * @param <V> The requested value type
+     * @return The loaded objects
+     */
     public <V> List<T> get(String selector, String operator, V value) {
         return query(selector.replaceAll("([A-Z])", "_$1").toLowerCase() + " " + operator + " ?",
                 new String[]{String.valueOf(value)});
     }
 
+    /**
+     * Get database objects from a set of a field values
+     * @param selector The field to use
+     * @param values The accepted values
+     * @param <V> The requested value type
+     * @return The loaded objects
+     */
     public <V> List<T> getIn(String selector, V[] values) {
         String[] placeholders = new String[values.length];
         String[] stringValues = new String[values.length];
@@ -91,10 +120,20 @@ public class DAO<T extends Data> {
                 stringValues);
     }
 
+    /**
+     * Get all database objects for this DAO
+     * @return The loaded objects
+     */
     public List<T> getAll() {
         return query(null, null);
     }
 
+    /**
+     * Loads objects from a SQL WHERE statement and corresponding requested values
+     * @param query The SQL WHERE statement
+     * @param values The values replacing ?s in the previous parameter
+     * @return The loaded objects
+     */
     private List<T> query(String query, String[] values) {
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor cursor = db.query(tableName, colNames,
@@ -115,6 +154,10 @@ public class DAO<T extends Data> {
         return list;
     }
 
+    /**
+     * Saves an object to the database
+     * @param object The object to save. Its ID is updated if the object is new in this database.
+     */
     public void save(T object) {
         SQLiteDatabase db;
         ContentValues values = null;
@@ -145,17 +188,29 @@ public class DAO<T extends Data> {
         }
     }
 
+    /**
+     * Saves several objects to the database
+     * @param objects The objects to save
+     */
     public void save(List<T> objects) {
         for (T object : objects) {
             save(object);
         }
     }
 
+    /**
+     * Removes an object from database
+     * @param id The id of the object to delete
+     */
     public void delete(int id) {
         SQLiteDatabase db = helper.getWritableDatabase();
         db.delete(tableName, "id = ?", new String[]{String.valueOf(id)});
     }
 
+    /**
+     * Removes an object from database
+     * @param object The object to delete
+     */
     public void delete(T object) {
         delete(object.getId());
     }
@@ -221,6 +276,9 @@ public class DAO<T extends Data> {
         return values;
     }
 
+    /**
+     * Loads objects of a ManyToOne association suffixed by -Object into the list
+     */
     public List<T> loadAssociation(List<T> list, String associationFieldName) {
         try {
             String baseMethodName = associationFieldName.substring(0, 1).toUpperCase() + associationFieldName.substring(1);
@@ -229,7 +287,7 @@ public class DAO<T extends Data> {
             T v;
             for (int i = 0, visitesSize = list.size(); i < visitesSize; i++) {
                 v = list.get(i);
-                    ids[i] = (Integer) getMethod.invoke(v);
+                ids[i] = (Integer) getMethod.invoke(v);
             }
 
             Method getObject = klass.getMethod("get" + baseMethodName + "Object");
@@ -258,15 +316,24 @@ public class DAO<T extends Data> {
         return list;
     }
 
+    /**
+     * A static method to get a DAO
+     */
     public static <E extends Data> DAO<E> getDAO(Context context, Class<E> klass) {
         return new DAO<>(context, klass);
     }
 
+    /**
+     * Save an object without loading a local DAO
+     */
     public static <E extends Data> void save(Context context, E object) {
         DAO<E> dao = new DAO<>(context, (Class<E>) object.getClass());
         dao.save(object);
     }
 
+    /**
+     * Save several objects without loading a local DAO
+     */
     public static <E extends Data> void save(Context context, List<E> list) {
         if(list.size() > 0) {
             DAO<E> dao = new DAO<>(context, (Class<E>) list.get(0).getClass());

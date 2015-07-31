@@ -16,7 +16,7 @@ public interface ExportService {
     /**
      * Mettre l'ID à zéro pour ajouter un élément
      * @param token Authorization token
-     * @param visite Visite modifiée
+     * @param visite VisiteActivity modifiée
      * @return La visite modifiée
      */
     @PUT("/commercial/visites/sync/")

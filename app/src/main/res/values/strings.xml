@@ -12,4 +12,5 @@
     <string name="password_key">in.turp.persistancetp.PASSWORD_KEY</string>
     <string name="last_update_key">in.turp.persistancetp.LAST_DB_UPDATE</string>
     <string name="webserver_url">http://10.0.2.1:8000</string>
+    <string name="view_visite_title">Voir une visite</string>
 </resources>

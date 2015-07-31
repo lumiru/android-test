@@ -1,4 +1,4 @@
-package in.turp.persistancetp;
+package in.turp.persistancetp.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -37,8 +36,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import in.turp.persistancetp.R;
 import in.turp.persistancetp.dao.DAO;
-import in.turp.persistancetp.dao.DatabaseHelper;
 import in.turp.persistancetp.data.Magasin;
 import in.turp.persistancetp.data.ReleveProduit;
 import in.turp.persistancetp.data.Visite;
@@ -290,7 +289,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     }
 
     private void startMainActivity() {
-        Intent intent = new Intent(this, MagasinActivity.class);
+        Intent intent = new Intent(this, MagasinListActivity.class);
         startActivity(intent);
     }
 
@@ -369,7 +368,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             List<Visite> visites = visiteDAO.get("date_modification", ">", sqlLastUpdate);
 
             for (Visite visite : visites) {
-                // TODO Get server Visite ID to update related local RelevesProduit
+                // TODO Get server VisiteActivity ID to update related local RelevesProduit
                 exportService.save(token, visite);
             }
 

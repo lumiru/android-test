@@ -1,4 +1,4 @@
-package in.turp.persistancetp;
+package in.turp.persistancetp.activities;
 
 import android.app.ListActivity;
 import android.content.Intent;
@@ -12,12 +12,13 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import in.turp.persistancetp.R;
 import in.turp.persistancetp.dao.DAO;
 import in.turp.persistancetp.data.Magasin;
 import in.turp.persistancetp.view.MagasinListAdapter;
 
 
-public class MagasinActivity extends ListActivity {
+public class MagasinListActivity extends ListActivity {
     private static final int ROW_LAYOUT = R.layout.magasin_row;
     private static final int NO_DATA_MSG = R.string.no_magasin;
 
@@ -65,8 +66,8 @@ public class MagasinActivity extends ListActivity {
         super.onListItemClick(l, v, position, id);
         Magasin item = (Magasin) getListAdapter().getItem(position);
 
-        Intent intent = new Intent(this, VisiteActivity.class);
-        intent.putExtra(VisiteActivity.EXTRA_MAGASIN_ID, item.getId());
+        Intent intent = new Intent(this, VisiteListActivity.class);
+        intent.putExtra(VisiteListActivity.EXTRA_MAGASIN_ID, item.getId());
         startActivity(intent);
     }
 }

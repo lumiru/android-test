@@ -1,6 +1,7 @@
-package in.turp.persistancetp;
+package in.turp.persistancetp.activities;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,14 +12,16 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import in.turp.persistancetp.R;
 import in.turp.persistancetp.dao.DAO;
 import in.turp.persistancetp.data.Client;
+import in.turp.persistancetp.data.Magasin;
 import in.turp.persistancetp.data.Visite;
 import in.turp.persistancetp.view.VisiteListAdapter;
 
 
-public class VisiteActivity extends ListActivity {
-    public static final String EXTRA_MAGASIN_ID = "in.turp.pertistancetp.activity.visite.MAGASIN_ID";
+public class VisiteListActivity extends ListActivity {
+    public static final String EXTRA_MAGASIN_ID = "in.turp.pertistancetp.activity.visiteList.MAGASIN_ID";
     private static final int NO_DATA_MSG = R.string.no_visite;
     private static final int ROW_LAYOUT = R.layout.visite_row;
 
@@ -67,5 +70,10 @@ public class VisiteActivity extends ListActivity {
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
+        Visite item = (Visite) getListAdapter().getItem(position);
+
+        Intent intent = new Intent(this, VisiteActivity.class);
+        intent.putExtra(VisiteActivity.EXTRA_VISITE_ID, item.getId());
+        startActivity(intent);
     }
 }

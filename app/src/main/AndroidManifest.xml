@@ -13,16 +13,20 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".LoginActivity"
+            android:name=".activities.LoginActivity"
             android:label="@string/app_name"
             android:windowSoftInputMode="adjustResize|stateVisible" >
         </activity>
         <activity
-            android:name=".MagasinActivity"
+            android:name=".activities.MagasinListActivity"
             android:label="@string/title_activity_magasin" >
         </activity>
         <activity
-            android:name=".VisiteActivity"
+            android:name=".activities.VisiteListActivity"
+            android:label="@string/title_activity_visite" >
+        </activity>
+        <activity
+            android:name=".activities.VisiteActivity"
             android:label="@string/title_activity_visite" >
         </activity>
     </application>

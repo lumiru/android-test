@@ -17,7 +17,7 @@ public class ReleveProduit implements Data {
     private int produit;
     // private Produit produit;
     private int visite;
-    // private Visite visite;
+    // private VisiteActivity visite;
 
     @Override
     public int getId() {
@@ -100,11 +100,11 @@ public class ReleveProduit implements Data {
         // visite = null;
     }
 
-//    public Visite getVisite() {
+//    public VisiteActivity getVisite() {
 //        return visite;
 //    }
 //
-//    public void setVisite(Visite visite) {
+//    public void setVisite(VisiteActivity visite) {
 //        this.visite = visite;
 //        visite = visite.getId();
 //    }
