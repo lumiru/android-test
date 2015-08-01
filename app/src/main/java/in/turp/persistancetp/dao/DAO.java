@@ -267,6 +267,9 @@ public class DAO<T extends Data> {
                     DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.FRANCE);
                     values.put(colName, df.format(value));
                 }
+                else if(value instanceof Boolean) {
+                    values.put(colName, (boolean) value ? 1 : 0);
+                }
                 else {
                     values.put(colName, String.valueOf(value));
                 }

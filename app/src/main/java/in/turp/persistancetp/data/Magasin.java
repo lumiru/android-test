@@ -10,6 +10,7 @@ import in.turp.persistancetp.dao.Data;
 public class Magasin implements Data {
     private int id;
     private int enseigne;
+    private Enseigne enseigneObject;
     private String nom;
     private String adresse;
     private String codePostal;
@@ -31,21 +32,21 @@ public class Magasin implements Data {
     }
 
     public void setEnseigne(int enseigneId) {
-        // enseigne = null;
+        enseigneObject = null;
         this.enseigne = enseigneId;
     }
 
-    /*public Enseigne getEnseigne() {
+    public Enseigne getEnseigneObject() {
         //if(enseigne == null && enseigne > 0) {
         //    enseigne = ;
         //}
-        return enseigne;
+        return enseigneObject;
     }
 
-    public void setEnseigne(Enseigne enseigne) {
-        enseigne = enseigne.getId();
-        this.enseigne = enseigne;
-    }*/
+    public void setEnseigneObject(Enseigne enseigne) {
+        this.enseigne = enseigne.getId();
+        this.enseigneObject = enseigne;
+    }
 
     public String getNom() {
         return nom;
@@ -101,5 +102,10 @@ public class Magasin implements Data {
 
     public void setDateModification(Date dateModification) {
         this.dateModification = dateModification;
+    }
+
+    @Override
+    public String toString() {
+        return nom + " - " + enseigneObject + " - " + ville;
     }
 }

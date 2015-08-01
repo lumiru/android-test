@@ -7,7 +7,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 import in.turp.persistancetp.R;
 import in.turp.persistancetp.data.Magasin;
@@ -19,11 +21,13 @@ import in.turp.persistancetp.data.Visite;
 public class VisiteListAdapter extends ArrayAdapter<Visite> {
     private final LayoutInflater inflater;
     private final int resource;
+    private final SimpleDateFormat format;
 
     public VisiteListAdapter(Context context, int resource, List<Visite> objects) {
         super(context, resource, objects);
         this.resource = resource;
         inflater = LayoutInflater.from(context);
+        format = new SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE);
     }
 
     @Override
@@ -41,7 +45,7 @@ public class VisiteListAdapter extends ArrayAdapter<Visite> {
 
         TextView description = (TextView) convertView.findViewById(R.id.visite_item_ville);
         if(visite.getDateVisite() != null) {
-            description.setText(visite.getDateVisite().toString());
+            description.setText(format.format(visite.getDateVisite()));
         }
 
         return convertView;

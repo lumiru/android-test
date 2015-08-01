@@ -96,7 +96,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             else {
                 showProgress(true);
                 mAuthTask = new UserLoginTask(username, password);
-                mAuthTask.execute((Void) null);
+                mAuthTask.execute(true);
                 //startMainActivity();
                 //init();
             }
@@ -186,7 +186,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             // perform the user login attempt.
             showProgress(true);
             mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            mAuthTask.execute();
         }
     }
 
@@ -406,7 +406,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserLoginTask extends AsyncTask<Boolean, Void, Boolean> {
 
         private final String mEmail;
         private final String mPassword;
@@ -417,9 +417,16 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
+        protected Boolean doInBackground(Boolean... params) {
             // Si on n'a pas de réponse positive du serveur, on ne peut pas continuer
-            return authenticate(mEmail, mPassword) == AUTHENTICATION_SUCCESS;
+            byte authentication = authenticate(mEmail, mPassword);
+
+            if(params.length > 0 && params[0]) {
+                return authentication != AUTHENTICATION_FAILED;
+            }
+            else {
+                return authentication == AUTHENTICATION_SUCCESS;
+            }
         }
 
         @Override
@@ -430,6 +437,9 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             if (success) {
                 startMainActivity();
             } else {
+                if(mPasswordView == null) {
+                    init();
+                }
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
             }

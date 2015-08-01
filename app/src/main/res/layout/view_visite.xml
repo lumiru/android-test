@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/magasin_spinner"
-            android:spinnerMode="dropdown" />
+            android:spinnerMode="dialog" />
 
         <TextView
             android:layout_width="match_parent"
@@ -54,6 +54,12 @@
             android:text="Visite réalisée"
             android:id="@+id/realisee_check_box"
             android:checked="false" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enregistrer"
+            android:id="@+id/send_visite_button" />
 
     </LinearLayout>
 </ScrollView>

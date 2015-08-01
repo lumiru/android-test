@@ -28,6 +28,7 @@ public class MagasinListActivity extends ListActivity {
 
         DAO<Magasin> dao = new DAO<>(getApplicationContext(), Magasin.class);
         List<Magasin> magasins = dao.getAll();
+        dao.loadAssociation(magasins, "enseigne");
         if(magasins.size() == 0) {
             Toast toast = Toast.makeText(this, NO_DATA_MSG, Toast.LENGTH_LONG);
             toast.show();

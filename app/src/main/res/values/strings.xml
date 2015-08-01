@@ -13,4 +13,7 @@
     <string name="last_update_key">in.turp.persistancetp.LAST_DB_UPDATE</string>
     <string name="webserver_url">http://10.0.2.1:8000</string>
     <string name="view_visite_title">Voir une visite</string>
+    <string name="visite_no_magasin">Merci de sélectionner un magasin</string>
+    <string name="error_visite_no_client">Merci de sélectionner un client</string>
+    <string name="error_invalid_date">Format de la date invalide</string>
 </resources>

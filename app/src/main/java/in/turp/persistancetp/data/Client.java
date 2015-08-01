@@ -24,4 +24,9 @@ public class Client implements Data {
     public void setNom(String nom) {
         this.nom = nom;
     }
+
+    @Override
+    public String toString() {
+        return nom;
+    }
 }

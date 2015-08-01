@@ -30,14 +30,14 @@ public class MagasinListAdapter extends ArrayAdapter<Magasin> {
         /* create a new view of my layout and inflate it in the row */
         convertView = inflater.inflate( resource, null );
 
-        /* Extract the city's object to show */
+        /* Extract the magasin's object to show */
         Magasin magasin = getItem( position );
 
-        /* Take the TextView from layout and set the city's name */
+        /* Take the TextView from layout and set the magasin's name */
         TextView label = (TextView) convertView.findViewById(R.id.magasin_item_label);
         label.setText(magasin.getNom());
 
-        /* Take the TextView from layout and set the city's wiki link */
+        /* Take the TextView from layout and set the magasin's city */
         TextView description = (TextView) convertView.findViewById(R.id.magasin_item_ville);
         description.setText(magasin.getVille());
 
@@ -48,8 +48,13 @@ public class MagasinListAdapter extends ArrayAdapter<Magasin> {
         //Drawable image = context.getResources().getDrawable(imageResource);
         //imageCity.setImageDrawable(image);
 
-        //TextView magasinGroupe = (ImageView) convertView.findViewById(R.id.magasin_item_groupe);
-        // magasinGroupe.setText(magasin.getEnseigne().getNom());
+        TextView magasinGroupe = (TextView) convertView.findViewById(R.id.magasin_item_groupe);
+        if(magasin.getEnseigneObject() != null) {
+            magasinGroupe.setText(magasin.getEnseigneObject().getNom());
+        }
+        else {
+            magasinGroupe.setVisibility(View.INVISIBLE);
+        }
 
         return convertView;
     }

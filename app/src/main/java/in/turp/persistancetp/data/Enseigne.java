@@ -46,4 +46,10 @@ public class Enseigne implements Data {
 //        this.groupe = groupe;
 //        groupe = groupe.getId();
 //    }
+
+
+    @Override
+    public String toString() {
+        return nom;
+    }
 }

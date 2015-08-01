@@ -1,17 +1,23 @@
 package in.turp.persistancetp.activities;
 
+import android.support.annotation.StringRes;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -22,9 +28,17 @@ import in.turp.persistancetp.data.Magasin;
 import in.turp.persistancetp.data.Visite;
 import in.turp.persistancetp.view.MagasinListAdapter;
 
-public class VisiteActivity extends ActionBarActivity {
+public class VisiteActivity extends ActionBarActivity implements View.OnClickListener {
 
     public static final String EXTRA_VISITE_ID = "in.turp.pertistancetp.activity.visite.VISITE_ID";
+
+    private DAO<Visite> dao;
+    private Visite visite;
+    private Spinner magasinSpinner;
+    private Spinner clientSpinner;
+    private EditText dateField;
+    private CheckBox realiseeCheckBox;
+    private DateFormat format;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,15 +46,25 @@ public class VisiteActivity extends ActionBarActivity {
         setContentView(R.layout.view_visite);
         setTitle(R.string.view_visite_title);
 
-        DAO<Visite> dao = new DAO<>(getApplicationContext(), Visite.class);
+        dao = new DAO<>(getApplicationContext(), Visite.class);
         int visiteId = getIntent().getIntExtra(EXTRA_VISITE_ID, 0);
-        Visite visite = dao.get(visiteId);
+        if(visiteId == 0) {
+            visite = new Visite();
+        }
+        else {
+            visite = dao.get(visiteId);
+        }
 
-        List<Magasin> magasins = DAO.getDAO(getApplicationContext(), Magasin.class).getAll();
-        List<Client> clients = DAO.getDAO(getApplicationContext(), Client.class).getAll();
+        DAO<Magasin> daoMagasin = new DAO<>(getApplicationContext(), Magasin.class);
+        DAO<Client> daoClient = new DAO<>(getApplicationContext(), Client.class);
 
-        Spinner magasinSpinner = (Spinner) findViewById(R.id.magasin_spinner);
-        Spinner clientSpinner = (Spinner) findViewById(R.id.client_spinner);
+        List<Magasin> magasins = daoMagasin.getAll();
+        List<Client> clients = daoClient.getAll();
+
+        daoMagasin.loadAssociation(magasins, "enseigne");
+
+        magasinSpinner = (Spinner) findViewById(R.id.magasin_spinner);
+        clientSpinner = (Spinner) findViewById(R.id.client_spinner);
 
         int magasinIndex = -1;
         for (int i = 0, magasinsSize = magasins.size(); i < magasinsSize; ++i) {
@@ -51,25 +75,47 @@ public class VisiteActivity extends ActionBarActivity {
             }
         }
 
-        magasinSpinner.setAdapter(new MagasinListAdapter(getApplicationContext(), R.layout.magasin_row, magasins));
+        MagasinListAdapter magasinAdapter = new MagasinListAdapter(getApplicationContext(), R.layout.magasin_row, magasins);
+        magasinAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        magasinSpinner.setAdapter(magasinAdapter);
         if(magasinIndex >= 0) {
             magasinSpinner.setSelection(magasinIndex);
         }
 
-        if(visite.getDateVisite() != null) {
-            EditText date = (EditText) findViewById(R.id.date_visite_text);
-            DateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE);
-            date.setText(format.format(visite.getDateVisite()));
+        int clientIndex = -1;
+        for (int i = 0, clientSize = clients.size(); i < clientSize; ++i) {
+            Client client = clients.get(i);
+            if (client.getId() == visite.getClient()) {
+                clientIndex = i;
+                break;
+            }
         }
 
-        CheckBox realiseeCheckBox = (CheckBox) findViewById(R.id.realisee_check_box);
+        ArrayAdapter<Client> clientAdapter = new ArrayAdapter<>(getApplicationContext(),
+                R.layout.spinner_dropdown_item, R.id.spinner_dropdown_item, clients);
+        clientAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        clientSpinner.setAdapter(clientAdapter);
+        if(clientIndex >= 0) {
+            clientSpinner.setSelection(clientIndex);
+        }
+
+        dateField = (EditText) findViewById(R.id.date_visite_text);
+        format = new SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE);
+        if(visite.getDateVisite() != null) {
+            dateField.setText(format.format(visite.getDateVisite()));
+        }
+
+        realiseeCheckBox = (CheckBox) findViewById(R.id.realisee_check_box);
         realiseeCheckBox.setChecked(visite.getIsRealisee());
+
+        Button button = (Button) findViewById(R.id.send_visite_button);
+        button.setOnClickListener(this);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_visite, menu);
+        // getMenuInflater().inflate(R.menu.menu_visite, menu);
         return true;
     }
 
@@ -86,5 +132,54 @@ public class VisiteActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View v) {
+        Magasin magasin = null;
+        Client client = null;
+        String dateStr = dateField.getText().toString();
+        Date date = null;
+        boolean realisee = realiseeCheckBox.isChecked();
+
+        if(magasinSpinner.getSelectedItemPosition() != AdapterView.INVALID_POSITION) {
+            magasin = (Magasin) magasinSpinner.getSelectedItem();
+        }
+        else {
+            toast(R.string.visite_no_magasin);
+        }
+
+        if(clientSpinner.getSelectedItemPosition() != AdapterView.INVALID_POSITION) {
+            client = (Client) clientSpinner.getSelectedItem();
+        }
+        else {
+            toast(R.string.error_visite_no_client);
+        }
+
+        if(dateStr.isEmpty()) {
+            dateField.setError(getString(R.string.error_field_required));
+        }
+        else {
+            try {
+                date = format.parse(dateStr);
+            } catch (ParseException e) {
+                dateField.setError(getString(R.string.error_invalid_date));
+            }
+        }
+
+        if(magasin != null && client != null && date != null) {
+            visite.setMagasin(magasin.getId());
+            visite.setClientObject(client);
+            visite.setDateVisite(date);
+            visite.setIsRealisee(realisee);
+
+            dao.save(visite);
+            finish();
+        }
+    }
+
+    private void toast(@StringRes int resId) {
+        Toast toast = Toast.makeText(this, getString(resId), Toast.LENGTH_LONG);
+        toast.show();
     }
 }
