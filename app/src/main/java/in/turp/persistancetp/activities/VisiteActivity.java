@@ -2,9 +2,7 @@ package in.turp.persistancetp.activities;
 
 import android.app.Activity;
 import android.support.annotation.StringRes;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,7 +43,7 @@ public class VisiteActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.view_visite);
+        setContentView(R.layout.edit_visite);
 
         dao = new DAO<>(getApplicationContext(), Visite.class);
         int visiteId = getIntent().getIntExtra(EXTRA_VISITE_ID, 0);

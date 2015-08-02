@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">PersistanceTp</string>
-    <string name="title_activity_visite">Voir une visite</string>
-    <string name="title_activity_magasin_list">Liste des magasin</string>
+    <string name="title_activity_visite">Modifier une visite</string>
+    <string name="title_activity_magasin_list">Liste des magasins</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Configuration</string>
     <string name="no_magasin">Aucun magasin à afficher</string>
@@ -19,4 +19,6 @@
     <string name="title_activity_visite_list">Liste des visites</string>
     <string name="title_activity_releve_list">Liste des relevés produit</string>
     <string name="action_edit">Modifier</string>
+    <string name="title_activity_magasin">Modifier un magasin</string>
+    <string name="magasin_no_enseigne">Merci de sélectionner une enseigne</string>
 </resources>

@@ -25,12 +25,14 @@ public class VisiteListActivity extends ListActivity {
     private static final int NO_DATA_MSG = R.string.no_visite;
     private static final int ROW_LAYOUT = R.layout.visite_row;
 
+    private int magasinId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         DAO<Visite> dao = new DAO<Visite>(getApplicationContext(), Visite.class);
-        int magasinId = getIntent().getIntExtra(EXTRA_MAGASIN_ID, 0);
+        magasinId = getIntent().getIntExtra(EXTRA_MAGASIN_ID, 0);
         List<Visite> visites = dao.get("magasin", magasinId);
         if(visites.size() == 0) {
             Toast toast = Toast.makeText(this, NO_DATA_MSG, Toast.LENGTH_LONG);
@@ -48,7 +50,7 @@ public class VisiteListActivity extends ListActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_visite, menu);
+        getMenuInflater().inflate(R.menu.menu_visite_list, menu);
         return true;
     }
 
@@ -59,8 +61,11 @@ public class VisiteListActivity extends ListActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_edit) {
+            Intent intent = new Intent(this, MagasinActivity.class);
+            intent.putExtra(MagasinActivity.EXTRA_MAGASIN_ID, magasinId);
+            startActivity(intent);
+
             return true;
         }
 
