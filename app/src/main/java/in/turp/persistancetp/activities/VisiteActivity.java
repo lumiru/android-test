@@ -1,8 +1,10 @@
 package in.turp.persistancetp.activities;
 
+import android.app.Activity;
 import android.support.annotation.StringRes;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,7 +30,7 @@ import in.turp.persistancetp.data.Magasin;
 import in.turp.persistancetp.data.Visite;
 import in.turp.persistancetp.view.MagasinListAdapter;
 
-public class VisiteActivity extends ActionBarActivity implements View.OnClickListener {
+public class VisiteActivity extends Activity implements View.OnClickListener {
 
     public static final String EXTRA_VISITE_ID = "in.turp.pertistancetp.activity.visite.VISITE_ID";
 

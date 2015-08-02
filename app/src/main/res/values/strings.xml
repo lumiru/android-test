@@ -18,4 +18,5 @@
     <string name="no_releve_produit">Pas de relevé pour cette visite</string>
     <string name="title_activity_visite_list">Liste des visites</string>
     <string name="title_activity_releve_list">Liste des relevés produit</string>
+    <string name="action_edit">Modifier</string>
 </resources>

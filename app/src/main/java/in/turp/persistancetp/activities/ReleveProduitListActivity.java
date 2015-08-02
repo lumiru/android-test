@@ -25,12 +25,14 @@ public class ReleveProduitListActivity extends ListActivity {
     private static final int NO_DATA_MSG = R.string.no_releve_produit;
     private static final int ROW_LAYOUT = R.layout.visite_row;
 
+    private int visiteId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         DAO<ReleveProduit> dao = new DAO<>(getApplicationContext(), ReleveProduit.class);
-        int visiteId = getIntent().getIntExtra(EXTRA_VISITE_ID, 0);
+        visiteId = getIntent().getIntExtra(EXTRA_VISITE_ID, 0);
         List<ReleveProduit> releves = dao.get("visite", visiteId);
         if(releves.size() == 0) {
             Toast toast = Toast.makeText(this, NO_DATA_MSG, Toast.LENGTH_LONG);
@@ -47,7 +49,7 @@ public class ReleveProduitListActivity extends ListActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_visite, menu);
+        getMenuInflater().inflate(R.menu.menu_releve_list, menu);
         return true;
     }
 
@@ -59,7 +61,11 @@ public class ReleveProduitListActivity extends ListActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_edit) {
+            Intent intent = new Intent(this, VisiteActivity.class);
+            intent.putExtra(VisiteActivity.EXTRA_VISITE_ID, visiteId);
+            startActivity(intent);
+
             return true;
         }
 
@@ -69,10 +75,10 @@ public class ReleveProduitListActivity extends ListActivity {
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        Visite item = (Visite) getListAdapter().getItem(position);
+//        Visite item = (Visite) getListAdapter().getItem(position);
 
-        Intent intent = new Intent(this, VisiteActivity.class);
-        intent.putExtra(VisiteActivity.EXTRA_VISITE_ID, item.getId());
-        startActivity(intent);
+//        Intent intent = new Intent(this, VisiteActivity.class);
+//        intent.putExtra(VisiteActivity.EXTRA_VISITE_ID, item.getId());
+//        startActivity(intent);
     }
 }

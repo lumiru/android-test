@@ -3,7 +3,6 @@
     android:id="@+id/spinner_dropdown_item"
     android:singleLine="false"
     android:layout_width="match_parent"
-    android:layout_height="?attr/dropdownListPreferredItemHeight"
+    android:layout_height="wrap_content"
     android:ellipsize="marquee"
-    android:textColor="@android:color/black"
     android:padding="12dp" />
