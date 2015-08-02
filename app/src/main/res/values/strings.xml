@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">PersistanceTp</string>
-    <string name="title_activity_visite">VisiteActivity</string>
-    <string name="title_activity_magasin">MagasinActivity</string>
+    <string name="title_activity_visite">Voir une visite</string>
+    <string name="title_activity_magasin_list">Liste des magasin</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Configuration</string>
     <string name="no_magasin">Aucun magasin à afficher</string>
@@ -12,8 +12,10 @@
     <string name="password_key">in.turp.persistancetp.PASSWORD_KEY</string>
     <string name="last_update_key">in.turp.persistancetp.LAST_DB_UPDATE</string>
     <string name="webserver_url">http://10.0.2.1:8000</string>
-    <string name="view_visite_title">Voir une visite</string>
     <string name="visite_no_magasin">Merci de sélectionner un magasin</string>
     <string name="error_visite_no_client">Merci de sélectionner un client</string>
     <string name="error_invalid_date">Format de la date invalide</string>
+    <string name="no_releve_produit">Pas de relevé pour cette visite</string>
+    <string name="title_activity_visite_list">Liste des visites</string>
+    <string name="title_activity_releve_list">Liste des relevés produit</string>
 </resources>

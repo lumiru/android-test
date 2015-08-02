@@ -291,6 +291,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     private void startMainActivity() {
         Intent intent = new Intent(this, MagasinListActivity.class);
         startActivity(intent);
+        finish();
     }
 
     private <T> T getRestService(Class<T> klass) {

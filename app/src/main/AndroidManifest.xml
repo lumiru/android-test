@@ -19,11 +19,15 @@
         </activity>
         <activity
             android:name=".activities.MagasinListActivity"
-            android:label="@string/title_activity_magasin" >
+            android:label="@string/title_activity_magasin_list" >
         </activity>
         <activity
             android:name=".activities.VisiteListActivity"
-            android:label="@string/title_activity_visite" >
+            android:label="@string/title_activity_visite_list" >
+        </activity>
+        <activity
+            android:name=".activities.ReleveProduitListActivity"
+            android:label="@string/title_activity_releve_list" >
         </activity>
         <activity
             android:name=".activities.VisiteActivity"

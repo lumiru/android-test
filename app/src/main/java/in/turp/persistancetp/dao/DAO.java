@@ -217,7 +217,7 @@ public class DAO<T extends Data> {
 
     private T fill(Cursor cursor) throws IllegalAccessException, InstantiationException,
             NoSuchMethodException, NoSuchFieldException, InvocationTargetException, ParseException {
-        T object = (T) klass.newInstance();
+        T object = klass.newInstance();
         String attrName, methodName;
         Method method;
         Class<?> fieldType;
@@ -286,6 +286,8 @@ public class DAO<T extends Data> {
         try {
             String baseMethodName = associationFieldName.substring(0, 1).toUpperCase() + associationFieldName.substring(1);
             Method getMethod = klass.getMethod("get" + baseMethodName);
+
+            // Get each associated IDs
             Integer[] ids = new Integer[list.size()];
             T v;
             for (int i = 0, visitesSize = list.size(); i < visitesSize; i++) {
@@ -293,15 +295,20 @@ public class DAO<T extends Data> {
                 ids[i] = (Integer) getMethod.invoke(v);
             }
 
+            // Get setMethod to populate the list
             Method getObject = klass.getMethod("get" + baseMethodName + "Object");
             Class<? extends Data> fieldType = (Class<? extends Data>) getObject.getReturnType();
             Method setMethod = klass.getMethod("set" + baseMethodName + "Object", fieldType);
+
+            // Get associated objects
             DAO<?> dao = new DAO<>(context, fieldType);
-            List<? extends Data> clients = dao.getIn("id", ids);
-            for (Data c : clients) {
-                for (T o : list) {
-                    if((int) getMethod.invoke(o) == c.getId()) {
-                        setMethod.invoke(o, c);
+            List<? extends Data> associated = dao.getIn("id", ids);
+
+            // Associate the objects to the list
+            for (Data data : associated) {
+                for (T item : list) {
+                    if((int) getMethod.invoke(item) == data.getId()) {
+                        setMethod.invoke(item, data);
                     }
                 }
             }

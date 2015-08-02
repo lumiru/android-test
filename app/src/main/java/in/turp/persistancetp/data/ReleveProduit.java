@@ -15,7 +15,7 @@ public class ReleveProduit implements Data {
     private String approvisionnement;
     private boolean isValide;
     private int produit;
-    // private Produit produit;
+    private Produit produitObject;
     private int visite;
     // private VisiteActivity visite;
 
@@ -78,18 +78,18 @@ public class ReleveProduit implements Data {
     }
 
     public void setProduit(int produit) {
+        produitObject = null;
         this.produit = produit;
-        // produit = null;
     }
 
-//    public Produit getProduit() {
-//        return produit;
-//    }
-//
-//    public void setProduit(Produit produit) {
-//        this.produit = produit;
-//        produit = produit.getId();
-//    }
+    public Produit getProduitObject() {
+        return produitObject;
+    }
+
+    public void setProduitObject(Produit produit) {
+        this.produit = produit.getId();
+        produitObject = produit;
+    }
 
     public int getVisite() {
         return visite;

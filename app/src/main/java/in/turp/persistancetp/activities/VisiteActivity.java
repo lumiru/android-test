@@ -44,7 +44,6 @@ public class VisiteActivity extends ActionBarActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_visite);
-        setTitle(R.string.view_visite_title);
 
         dao = new DAO<>(getApplicationContext(), Visite.class);
         int visiteId = getIntent().getIntExtra(EXTRA_VISITE_ID, 0);
