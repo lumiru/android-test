@@ -107,6 +107,23 @@ public class DAO<T extends Data> {
      * @param <V> The requested value type
      * @return The loaded objects
      */
+    public <V extends Data> List<T> getIn(String selector, V[] values) {
+        Integer[] ids = new Integer[values.length];
+        for (int i = 0, valuesLength = values.length; i < valuesLength; ++i) {
+            V data = values[i];
+            ids[i] = data.getId();
+        }
+
+        return getIn(selector, ids);
+    }
+
+    /**
+     * Get database objects from a set of a field values
+     * @param selector The field to use
+     * @param values The accepted values
+     * @param <V> The requested value type
+     * @return The loaded objects
+     */
     public <V> List<T> getIn(String selector, V[] values) {
         String[] placeholders = new String[values.length];
         String[] stringValues = new String[values.length];
@@ -283,26 +300,35 @@ public class DAO<T extends Data> {
      * Loads objects of a ManyToOne association suffixed by -Object into the list
      */
     public List<T> loadAssociation(List<T> list, String associationFieldName) {
+        return loadAssociation(list, associationFieldName, null);
+    }
+
+    /**
+     * Loads objects of a ManyToOne association suffixed by -Object into the list
+     */
+    public List<T> loadAssociation(List<T> list, String associationFieldName, List<? extends Data> associated) {
         try {
             String baseMethodName = associationFieldName.substring(0, 1).toUpperCase() + associationFieldName.substring(1);
             Method getMethod = klass.getMethod("get" + baseMethodName);
-
-            // Get each associated IDs
-            Integer[] ids = new Integer[list.size()];
-            T v;
-            for (int i = 0, visitesSize = list.size(); i < visitesSize; i++) {
-                v = list.get(i);
-                ids[i] = (Integer) getMethod.invoke(v);
-            }
 
             // Get setMethod to populate the list
             Method getObject = klass.getMethod("get" + baseMethodName + "Object");
             Class<? extends Data> fieldType = (Class<? extends Data>) getObject.getReturnType();
             Method setMethod = klass.getMethod("set" + baseMethodName + "Object", fieldType);
 
-            // Get associated objects
-            DAO<?> dao = new DAO<>(context, fieldType);
-            List<? extends Data> associated = dao.getIn("id", ids);
+            if(associated == null) {
+                // Get each associated IDs
+                Integer[] ids = new Integer[list.size()];
+                T v;
+                for (int i = 0, visitesSize = list.size(); i < visitesSize; i++) {
+                    v = list.get(i);
+                    ids[i] = (Integer) getMethod.invoke(v);
+                }
+
+                // Get associated objects
+                DAO<?> dao = new DAO<>(context, fieldType);
+                associated = dao.getIn("id", ids);
+            }
 
             // Associate the objects to the list
             for (Data data : associated) {

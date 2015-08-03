@@ -23,4 +23,7 @@
     <string name="magasin_no_enseigne">Merci de sélectionner une enseigne</string>
     <string name="title_activity_releve_produit">Modifier un relevé produit</string>
     <string name="releve_no_produit">Merci de choisir un produit</string>
+    <string name="action_add">Ajouter</string>
+    <string name="action_edit_magasin">Modifier le magasin</string>
+    <string name="action_edit_visite">Modifier la visite</string>
 </resources>

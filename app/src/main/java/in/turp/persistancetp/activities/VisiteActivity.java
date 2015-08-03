@@ -30,6 +30,7 @@ import in.turp.persistancetp.view.MagasinListAdapter;
 
 public class VisiteActivity extends Activity implements View.OnClickListener {
 
+    public static final String EXTRA_MAGASIN_ID = "in.turp.pertistancetp.activity.visite.MAGASIN_ID";
     public static final String EXTRA_VISITE_ID = "in.turp.pertistancetp.activity.visite.VISITE_ID";
 
     private DAO<Visite> dao;
@@ -50,6 +51,8 @@ public class VisiteActivity extends Activity implements View.OnClickListener {
         if(visiteId == 0) {
             visite = new Visite();
             visite.setDateCreation(new Date());
+            int magasinId = getIntent().getIntExtra(EXTRA_MAGASIN_ID, 0);
+            visite.setMagasin(magasinId);
         }
         else {
             visite = dao.get(visiteId);

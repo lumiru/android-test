@@ -4,6 +4,8 @@
     tools:context="in.turp.persistancetp.activities.ReleveProduitListActivity">
     <!--<item android:id="@+id/action_settings" android:title="@string/action_settings"-->
         <!--android:orderInCategory="100" app:showAsAction="never" />-->
-    <item android:id="@+id/action_edit" android:title="@string/action_edit"
+    <item android:id="@+id/action_edit" android:title="@string/action_edit_visite"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_add" android:title="@string/action_add"
         android:orderInCategory="100" app:showAsAction="never" />
 </menu>

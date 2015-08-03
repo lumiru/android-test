@@ -15,14 +15,21 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import in.turp.persistancetp.R;
 import in.turp.persistancetp.dao.DAO;
+import in.turp.persistancetp.dao.Data;
+import in.turp.persistancetp.data.Famille;
 import in.turp.persistancetp.data.Produit;
 import in.turp.persistancetp.data.ReleveProduit;
+import in.turp.persistancetp.data.Visite;
 
 public class ReleveProduitActivity extends Activity implements View.OnClickListener {
+    public static final String EXTRA_VISITE_ID = "in.turp.pertistancetp.activity.releve.VISITE_ID";
     public static final String EXTRA_RELEVE_ID = "in.turp.pertistancetp.activity.releve.RELEVE_ID";
 
     private DAO<ReleveProduit> dao;
@@ -40,14 +47,31 @@ public class ReleveProduitActivity extends Activity implements View.OnClickListe
         int releveId = getIntent().getIntExtra(EXTRA_RELEVE_ID, 0);
         if(releveId == 0) {
             releve = new ReleveProduit();
+            int visiteId = getIntent().getIntExtra(EXTRA_VISITE_ID, 0);
+            releve.setVisite(visiteId);
         }
         else {
             releve = dao.get(releveId);
         }
 
-        DAO<Produit> daoProduit = new DAO<>(getApplicationContext(), Produit.class);
-        List<Produit> produits = daoProduit.getAll();
+        // Charger uniquement les produits du client
+        // On va chercher le client dans la visite
 
+        Famille[] familles = new Famille[0];
+        if(releve.getVisite() != 0) {
+            int clientId = 0;
+            DAO<Visite> daoVisite = new DAO<>(getApplicationContext(), Visite.class);
+            clientId = daoVisite.get(releve.getVisite()).getClient();
+
+            DAO<Famille> daoFamille = new DAO<>(getApplicationContext(), Famille.class);
+            familles = daoFamille.get("client", clientId).toArray(familles);
+        }
+
+        DAO<Produit> daoProduit = new DAO<>(getApplicationContext(), Produit.class);
+        List<Produit> produits = daoProduit.getIn("famille", familles);
+        daoProduit.loadAssociation(produits, "famille", Arrays.asList(familles));
+
+        // Obtention des champs
         produitSpinner = (Spinner) findViewById(R.id.releve_produit_spinner);
         prixField = (EditText) findViewById(R.id.releve_prix_field);
         prixReleveField = (EditText) findViewById(R.id.releve_prix_releve_field);
@@ -55,6 +79,7 @@ public class ReleveProduitActivity extends Activity implements View.OnClickListe
         approvisionnementField = (EditText) findViewById(R.id.releve_approvisionnement_field);
         valideField = (CheckBox) findViewById(R.id.releve_valide_field);
 
+        // Définition des valeurs
         int produitIndex = -1;
         for (int i = 0, enseignesSize = produits.size(); i < enseignesSize; ++i) {
             Produit produit = produits.get(i);
@@ -71,9 +96,9 @@ public class ReleveProduitActivity extends Activity implements View.OnClickListe
             produitSpinner.setSelection(produitIndex);
         }
 
-        prixField.setText(releve.getPrix());
-        prixReleveField.setText(releve.getPrixReleve());
-        facingField.setText(releve.getFacing());
+        prixField.setText(String.valueOf(releve.getPrix() / 100.));
+        prixReleveField.setText(String.valueOf(releve.getPrixReleve() / 100.));
+        facingField.setText(String.valueOf(releve.getFacing()));
         approvisionnementField.setText(releve.getApprovisionnement());
         valideField.setChecked(releve.getIsValide());
 
@@ -144,6 +169,7 @@ public class ReleveProduitActivity extends Activity implements View.OnClickListe
             releve.setPrixReleve((int) (Float.parseFloat(prixReleve) * 100));
             releve.setFacing(Integer.parseInt(facing));
             releve.setApprovisionnement(approvisionnement);
+            releve.setIsValide(valideField.isChecked());
 
             dao.save(releve);
             finish();

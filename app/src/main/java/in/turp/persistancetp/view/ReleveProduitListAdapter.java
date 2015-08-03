@@ -42,7 +42,7 @@ public class ReleveProduitListAdapter extends ArrayAdapter<ReleveProduit> {
         }
 
         TextView description = (TextView) convertView.findViewById(R.id.releve_item_prix);
-        description.setText(releve.getPrix());
+        description.setText(String.valueOf(releve.getPrix()));
 
         return convertView;
     }

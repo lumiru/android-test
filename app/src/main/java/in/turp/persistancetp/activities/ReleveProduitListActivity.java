@@ -23,7 +23,7 @@ import in.turp.persistancetp.view.VisiteListAdapter;
 public class ReleveProduitListActivity extends ListActivity {
     public static final String EXTRA_VISITE_ID = "in.turp.pertistancetp.activity.releveProduitList.VISITE_ID";
     private static final int NO_DATA_MSG = R.string.no_releve_produit;
-    private static final int ROW_LAYOUT = R.layout.visite_row;
+    private static final int ROW_LAYOUT = R.layout.releve_produit_row;
 
     private int visiteId;
 
@@ -68,6 +68,13 @@ public class ReleveProduitListActivity extends ListActivity {
 
             return true;
         }
+        else if (id == R.id.action_add) {
+            Intent intent = new Intent(this, ReleveProduitActivity.class);
+            intent.putExtra(ReleveProduitActivity.EXTRA_VISITE_ID, visiteId);
+            startActivity(intent);
+
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -75,10 +82,10 @@ public class ReleveProduitListActivity extends ListActivity {
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-//        Visite item = (Visite) getListAdapter().getItem(position);
+        ReleveProduit releve = (ReleveProduit) getListAdapter().getItem(position);
 
-//        Intent intent = new Intent(this, VisiteActivity.class);
-//        intent.putExtra(VisiteActivity.EXTRA_VISITE_ID, item.getId());
-//        startActivity(intent);
+        Intent intent = new Intent(this, ReleveProduitActivity.class);
+        intent.putExtra(ReleveProduitActivity.EXTRA_RELEVE_ID, releve.getId());
+        startActivity(intent);
     }
 }

@@ -11,7 +11,7 @@ public class Produit implements Data {
     private String ean13;
     private int prix;
     private int famille;
-    // private Famille famille;
+    private Famille familleObject;
 
     @Override
     public int getId() {
@@ -53,15 +53,22 @@ public class Produit implements Data {
 
     public void setFamille(int famille) {
         this.famille = famille;
-        // famille = null;
+        familleObject = null;
     }
 
-//    public Famille getFamille() {
-//        return famille;
-//    }
-//
-//    public void setFamille(Famille famille) {
-//        this.famille = famille;
-//        famille = famille.getId();
-//    }
+    public Famille getFamilleObject() {
+        return familleObject;
+    }
+
+    public void setFamilleObject(Famille famille) {
+        this.familleObject = famille;
+        this.famille = famille.getId();
+    }
+
+
+    @Override
+    public String toString() {
+        return nom + " (" +
+                (familleObject == null ? famille : familleObject.getLibelle()) + ")";
+    }
 }

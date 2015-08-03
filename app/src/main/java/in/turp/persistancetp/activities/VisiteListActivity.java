@@ -68,6 +68,13 @@ public class VisiteListActivity extends ListActivity {
 
             return true;
         }
+        else if (id == R.id.action_add) {
+            Intent intent = new Intent(this, VisiteActivity.class);
+            intent.putExtra(VisiteActivity.EXTRA_MAGASIN_ID, magasinId);
+            startActivity(intent);
+
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
