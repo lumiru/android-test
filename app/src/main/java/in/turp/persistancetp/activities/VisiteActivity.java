@@ -49,6 +49,7 @@ public class VisiteActivity extends Activity implements View.OnClickListener {
         int visiteId = getIntent().getIntExtra(EXTRA_VISITE_ID, 0);
         if(visiteId == 0) {
             visite = new Visite();
+            visite.setDateCreation(new Date());
         }
         else {
             visite = dao.get(visiteId);
@@ -171,6 +172,7 @@ public class VisiteActivity extends Activity implements View.OnClickListener {
             visite.setClientObject(client);
             visite.setDateVisite(date);
             visite.setIsRealisee(realisee);
+            visite.setDateModification(new Date());
 
             dao.save(visite);
             finish();

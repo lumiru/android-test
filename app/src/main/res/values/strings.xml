@@ -21,4 +21,6 @@
     <string name="action_edit">Modifier</string>
     <string name="title_activity_magasin">Modifier un magasin</string>
     <string name="magasin_no_enseigne">Merci de sélectionner une enseigne</string>
+    <string name="title_activity_releve_produit">Modifier un relevé produit</string>
+    <string name="releve_no_produit">Merci de choisir un produit</string>
 </resources>

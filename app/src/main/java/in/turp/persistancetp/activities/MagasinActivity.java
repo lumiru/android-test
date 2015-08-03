@@ -67,6 +67,9 @@ public class MagasinActivity extends Activity implements View.OnClickListener {
                 R.layout.spinner_dropdown_item, R.id.spinner_dropdown_item, enseignes);
         enseigneAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         enseigneSpinner.setAdapter(enseigneAdapter);
+        if(enseigneIndex >= 0) {
+            enseigneSpinner.setSelection(enseigneIndex);
+        }
 
         nomField.setText(magasin.getNom());
         adresseField.setText(magasin.getAdresse());

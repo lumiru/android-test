@@ -47,6 +47,10 @@
             android:name=".activities.MagasinActivity"
             android:label="@string/title_activity_magasin" >
         </activity>
+        <activity
+            android:name=".activities.ReleveProduitActivity"
+            android:label="@string/title_activity_releve_produit" >
+        </activity>
     </application>
 
 </manifest>
