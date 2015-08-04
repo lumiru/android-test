@@ -85,6 +85,12 @@
             android:layout_height="wrap_content"
             android:text="Enregistrer"
             android:id="@+id/send_releve_button" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Supprimer"
+            android:id="@+id/del_releve_button" />
     </LinearLayout>
 
 </ScrollView>

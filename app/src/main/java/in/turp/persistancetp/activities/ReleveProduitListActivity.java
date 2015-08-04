@@ -15,9 +15,7 @@ import java.util.List;
 import in.turp.persistancetp.R;
 import in.turp.persistancetp.dao.DAO;
 import in.turp.persistancetp.data.ReleveProduit;
-import in.turp.persistancetp.data.Visite;
 import in.turp.persistancetp.view.ReleveProduitListAdapter;
-import in.turp.persistancetp.view.VisiteListAdapter;
 
 
 public class ReleveProduitListActivity extends ListActivity {
@@ -31,19 +29,15 @@ public class ReleveProduitListActivity extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        DAO<ReleveProduit> dao = new DAO<>(getApplicationContext(), ReleveProduit.class);
         visiteId = getIntent().getIntExtra(EXTRA_VISITE_ID, 0);
-        List<ReleveProduit> releves = dao.get("visite", visiteId);
-        if(releves.size() == 0) {
-            Toast toast = Toast.makeText(this, NO_DATA_MSG, Toast.LENGTH_LONG);
-            toast.show();
-        }
+        update();
+    }
 
-        dao.loadAssociation(releves, "produit");
+    @Override
+    protected void onResume() {
+        super.onResume();
 
-        ArrayAdapter adapter = new ReleveProduitListAdapter(getApplicationContext(),
-                ROW_LAYOUT, releves);
-        setListAdapter(adapter);
+        update();
     }
 
     @Override
@@ -87,5 +81,20 @@ public class ReleveProduitListActivity extends ListActivity {
         Intent intent = new Intent(this, ReleveProduitActivity.class);
         intent.putExtra(ReleveProduitActivity.EXTRA_RELEVE_ID, releve.getId());
         startActivity(intent);
+    }
+
+    private void update() {
+        DAO<ReleveProduit> dao = new DAO<>(getApplicationContext(), ReleveProduit.class);
+        List<ReleveProduit> releves = dao.get("visite", visiteId);
+        if(releves.size() == 0) {
+            Toast toast = Toast.makeText(this, NO_DATA_MSG, Toast.LENGTH_LONG);
+            toast.show();
+        }
+
+        dao.loadAssociation(releves, "produit");
+
+        ArrayAdapter adapter = new ReleveProduitListAdapter(getApplicationContext(),
+                ROW_LAYOUT, releves);
+        setListAdapter(adapter);
     }
 }

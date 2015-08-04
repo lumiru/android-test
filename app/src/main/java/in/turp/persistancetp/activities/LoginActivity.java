@@ -365,19 +365,57 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 exportService.save(token, magasins);
             }
 
-            DAO<Visite> visiteDAO = new DAO<>(getApplicationContext(), Visite.class);
+            DAO<Visite> visiteDAO = new DAO<>(getApplicationContext(), Visite.class, false);
+            DAO<ReleveProduit> releveProduitDAO = new DAO<>(getApplicationContext(), ReleveProduit.class, false);
             List<Visite> visites = visiteDAO.get("date_modification", ">", sqlLastUpdate);
+            List<ReleveProduit> relevesProduit;
+            int wid;
 
             for (Visite visite : visites) {
-                // TODO Get server VisiteActivity ID to update related local RelevesProduit
-                exportService.save(token, visite);
+                if(visite.getWid() == Visite.WID_NEW) {
+                    visite.setWid(visite.getId());
+                }
+                if(visite.getWid() != Visite.WID_SYNC_ONCE) {
+                    visite.setId(0);
+                }
+                wid = visite.getWid();
+
+                visite = exportService.save(token, visite);
+
+                if(wid != Visite.WID_SYNC_ONCE) {
+                    // Une requête SQL, des fois, c'est plus simple :'°
+                    relevesProduit = releveProduitDAO.get("visite", wid);
+                    for (ReleveProduit releve : relevesProduit) {
+                        releve.setVisite(visite.getId());
+                        releveProduitDAO.save(releve);
+                    }
+
+                    visite.setWid(Visite.WID_SYNC_ONCE);
+                    visiteDAO.delete(wid);
+                }
+                visiteDAO.save(visite);
             }
 
-            DAO<ReleveProduit> releveProduitDAO = new DAO<>(getApplicationContext(), ReleveProduit.class);
-            List<ReleveProduit> relevesProduit = releveProduitDAO.get("date_modification", ">", sqlLastUpdate);
+
+            relevesProduit = releveProduitDAO.get("date_modification", ">", sqlLastUpdate);
 
             for (ReleveProduit releveProduit : relevesProduit) {
-                exportService.save(token, releveProduit);
+                if(releveProduit.getWid() == ReleveProduit.WID_NEW) {
+                    releveProduit.setWid(releveProduit.getId());
+                }
+                if(releveProduit.getWid() != ReleveProduit.WID_SYNC_ONCE) {
+                    releveProduit.setId(0);
+                }
+                wid = releveProduit.getWid();
+
+                releveProduit = exportService.save(token, releveProduit);
+
+                if(wid != ReleveProduit.WID_SYNC_ONCE) {
+                    releveProduit.setWid(ReleveProduit.WID_SYNC_ONCE);
+                    releveProduitDAO.delete(wid);
+                }
+
+                releveProduitDAO.save(releveProduit);
             }
 
             // Import all data

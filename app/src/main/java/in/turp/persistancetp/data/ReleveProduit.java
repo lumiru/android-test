@@ -1,13 +1,26 @@
 package in.turp.persistancetp.data;
 
+import java.util.Date;
+
 import in.turp.persistancetp.dao.Data;
 
 /**
  * Created by lumiru on 02/07/15.
  */
 public class ReleveProduit implements Data {
+    public static final int WID_NEW = -1;
+    public static final int WID_SYNC_ONCE = 0;
+
     private int id;
+
+    /**
+     * ID local
+     * WID_NEW = ID non encore attribué
+     * 0 = Existant sur le serveur
+     * Autre = Jamais synchronisé (existe uniquement en local)
+     */
     private int wid;
+
     private boolean supprime;
     private int prix;
     private int prixReleve;
@@ -18,6 +31,7 @@ public class ReleveProduit implements Data {
     private Produit produitObject;
     private int visite;
     // private VisiteActivity visite;
+    private Date dateModification;
 
     @Override
     public int getId() {
@@ -123,5 +137,13 @@ public class ReleveProduit implements Data {
 
     public void setSupprime(boolean supprime) {
         this.supprime = supprime;
+    }
+
+    public Date getDateModification() {
+        return dateModification;
+    }
+
+    public void setDateModification(Date dateModification) {
+        this.dateModification = dateModification;
     }
 }

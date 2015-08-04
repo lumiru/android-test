@@ -2,7 +2,6 @@ package in.turp.persistancetp.activities;
 
 import android.app.Activity;
 import android.support.annotation.StringRes;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,14 +14,12 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import in.turp.persistancetp.R;
 import in.turp.persistancetp.dao.DAO;
-import in.turp.persistancetp.dao.Data;
 import in.turp.persistancetp.data.Famille;
 import in.turp.persistancetp.data.Produit;
 import in.turp.persistancetp.data.ReleveProduit;
@@ -47,6 +44,7 @@ public class ReleveProduitActivity extends Activity implements View.OnClickListe
         int releveId = getIntent().getIntExtra(EXTRA_RELEVE_ID, 0);
         if(releveId == 0) {
             releve = new ReleveProduit();
+            releve.setWid(ReleveProduit.WID_NEW);
             int visiteId = getIntent().getIntExtra(EXTRA_VISITE_ID, 0);
             releve.setVisite(visiteId);
         }
@@ -104,6 +102,16 @@ public class ReleveProduitActivity extends Activity implements View.OnClickListe
 
         Button button = (Button) findViewById(R.id.send_releve_button);
         button.setOnClickListener(this);
+
+        Button deleteBtn = (Button) findViewById(R.id.del_releve_button);
+        deleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                releve.setSupprime(true);
+                dao.save(releve);
+                goBack();
+            }
+        });
     }
 
     @Override
@@ -170,10 +178,15 @@ public class ReleveProduitActivity extends Activity implements View.OnClickListe
             releve.setFacing(Integer.parseInt(facing));
             releve.setApprovisionnement(approvisionnement);
             releve.setIsValide(valideField.isChecked());
+            releve.setDateModification(new Date());
 
             dao.save(releve);
-            finish();
+            goBack();
         }
+    }
+
+    private void goBack() {
+        finish();
     }
 
     private void toast(@StringRes int resId) {

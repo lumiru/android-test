@@ -14,8 +14,6 @@ import java.util.List;
 
 import in.turp.persistancetp.R;
 import in.turp.persistancetp.dao.DAO;
-import in.turp.persistancetp.data.Client;
-import in.turp.persistancetp.data.Magasin;
 import in.turp.persistancetp.data.Visite;
 import in.turp.persistancetp.view.VisiteListAdapter;
 
@@ -31,21 +29,16 @@ public class VisiteListActivity extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        DAO<Visite> dao = new DAO<Visite>(getApplicationContext(), Visite.class);
         magasinId = getIntent().getIntExtra(EXTRA_MAGASIN_ID, 0);
-        List<Visite> visites = dao.get("magasin", magasinId);
-        if(visites.size() == 0) {
-            Toast toast = Toast.makeText(this, NO_DATA_MSG, Toast.LENGTH_LONG);
-            toast.show();
-        }
-
-        dao.loadAssociation(visites, "client");
-
-        ArrayAdapter adapter = new VisiteListAdapter(getApplicationContext(),
-                ROW_LAYOUT, visites);
-        setListAdapter(adapter);
+        update();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        update();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -87,5 +80,20 @@ public class VisiteListActivity extends ListActivity {
         Intent intent = new Intent(this, ReleveProduitListActivity.class);
         intent.putExtra(ReleveProduitListActivity.EXTRA_VISITE_ID, item.getId());
         startActivity(intent);
+    }
+
+    private void update() {
+        DAO<Visite> dao = new DAO<>(getApplicationContext(), Visite.class);
+        List<Visite> visites = dao.get("magasin", magasinId);
+        if(visites.size() == 0) {
+            Toast toast = Toast.makeText(this, NO_DATA_MSG, Toast.LENGTH_LONG);
+            toast.show();
+        }
+
+        dao.loadAssociation(visites, "client");
+
+        ArrayAdapter adapter = new VisiteListAdapter(getApplicationContext(),
+                ROW_LAYOUT, visites);
+        setListAdapter(adapter);
     }
 }

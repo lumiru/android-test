@@ -8,8 +8,19 @@ import in.turp.persistancetp.dao.Data;
  * Created by lumiru on 02/07/15.
  */
 public class Visite implements Data {
+    public static final int WID_NEW = -1;
+    public static final int WID_SYNC_ONCE = 0;
+
     private int id;
+
+    /**
+     * ID local
+     * WID_NEW = ID non encore attribué
+     * WIN_SYNC_ONCE = Existant sur le serveur (synchronisé au moins une fois)
+     * Autre = Jamais synchronisé (existe uniquement en local)
+     */
     private int wid;
+
     private boolean supprime;
     private Date dateCreation;
     private Date dateModification;

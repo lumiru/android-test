@@ -50,6 +50,7 @@ public class VisiteActivity extends Activity implements View.OnClickListener {
         int visiteId = getIntent().getIntExtra(EXTRA_VISITE_ID, 0);
         if(visiteId == 0) {
             visite = new Visite();
+            visite.setWid(Visite.WID_NEW); // Code pour dire qu'il est nouveau
             visite.setDateCreation(new Date());
             int magasinId = getIntent().getIntExtra(EXTRA_MAGASIN_ID, 0);
             visite.setMagasin(magasinId);
@@ -113,6 +114,16 @@ public class VisiteActivity extends Activity implements View.OnClickListener {
 
         Button button = (Button) findViewById(R.id.send_visite_button);
         button.setOnClickListener(this);
+
+        Button deleteBtn = (Button) findViewById(R.id.del_visite_button);
+        deleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                visite.setSupprime(true);
+                dao.save(visite);
+                goBack();
+            }
+        });
     }
 
     @Override
@@ -178,8 +189,12 @@ public class VisiteActivity extends Activity implements View.OnClickListener {
             visite.setDateModification(new Date());
 
             dao.save(visite);
-            finish();
+            goBack();
         }
+    }
+
+    private void goBack() {
+        finish();
     }
 
     private void toast(@StringRes int resId) {

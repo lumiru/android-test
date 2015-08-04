@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,8 +34,13 @@ public class DAO<T extends Data> {
     private String[] fieldNames;
     private String[] colNames;
     private Class<T> klass;
+    private boolean ignoreSupprime;
 
     public DAO(Context context, Class<T> klass) {
+        this(context, klass, true);
+    }
+
+    public DAO(Context context, Class<T> klass, boolean ignoreSupprime) {
         this.context = context;
         helper = new DatabaseHelper(context);
         this.klass = klass;
@@ -42,14 +48,20 @@ public class DAO<T extends Data> {
         List<String> fieldList = new ArrayList<>();
         List<String> colList = new ArrayList<>();
         Field[] fields = klass.getDeclaredFields();
+        boolean hasSupprime = false;
         for (Field field : fields) {
-            if(field.getType().isPrimitive() || field.getType() == Date.class || field.getType() == String.class) {
+            if(!Modifier.isFinal(field.getModifiers()) && !Modifier.isStatic(field.getModifiers()) &&
+                    (field.getType().isPrimitive() || field.getType() == Date.class || field.getType() == String.class)) {
+                if(ignoreSupprime && field.getName().equals("supprime")) {
+                    hasSupprime = true;
+                }
                 fieldList.add(field.getName());
                 colList.add(field.getName().replaceAll("([A-Z])", "_$1").toLowerCase());
             }
         }
         fieldNames = fieldList.toArray(new String[fieldList.size()]);
         colNames = colList.toArray(new String[colList.size()]);
+        this.ignoreSupprime = hasSupprime;
     }
 
     /**
@@ -60,7 +72,8 @@ public class DAO<T extends Data> {
     public T get(int id) {
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor cursor = db.query(tableName, colNames,
-                "id = ?", new String[]{String.valueOf(id)}, null, null, null);
+                "id = ?" + (ignoreSupprime ? " AND supprime = 0" : ""),
+                new String[]{String.valueOf(id)}, null, null, null);
 
         try {
             if(cursor.moveToFirst()) {
@@ -153,6 +166,15 @@ public class DAO<T extends Data> {
      */
     private List<T> query(String query, String[] values) {
         SQLiteDatabase db = helper.getReadableDatabase();
+        if(ignoreSupprime) {
+            if(query == null) {
+                query = "";
+            }
+            else {
+                query += " AND ";
+            }
+            query += "supprime = 0";
+        }
         Cursor cursor = db.query(tableName, colNames,
                 query, values, null, null, null);
 
