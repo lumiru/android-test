@@ -193,11 +193,15 @@ public class DAO<T extends Data> {
         return list;
     }
 
+    public void save(T object) {
+        save(object, object.getId());
+    }
+
     /**
      * Saves an object to the database
      * @param object The object to save. Its ID is updated if the object is new in this database.
      */
-    public void save(T object) {
+    public void save(T object, int oldId) {
         SQLiteDatabase db;
         ContentValues values = null;
         try {
@@ -209,13 +213,17 @@ public class DAO<T extends Data> {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-        if(object.getId() > 0 && get(object.getId()) != null) {
+        if(object.getId() > 0 && get(oldId) != null) {
             db = helper.getWritableDatabase();
             db.update(tableName, values,
-                    "id = ?", new String[]{String.valueOf(object.getId())});
+                    "id = ?", new String[]{String.valueOf(oldId)});
             db.close();
         }
         else {
+            if(object.getId() <= 0 && values != null) {
+                values.remove("id");
+            }
+
             db = helper.getWritableDatabase();
             int id = (int) db.insert(tableName, "id", values);
             db.close();
@@ -295,7 +303,6 @@ public class DAO<T extends Data> {
 
         for (int i = 0, colNamesLength = colNames.length; i < colNamesLength; i++) {
             colName = colNames[i];
-            if(colName.equals("id")) continue;
             attrName = fieldNames[i];
             methodName = "get" + attrName.substring(0, 1).toUpperCase() + attrName.substring(1);
             method = klass.getMethod(methodName);

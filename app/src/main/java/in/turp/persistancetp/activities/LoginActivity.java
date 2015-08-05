@@ -10,12 +10,14 @@ import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -38,16 +40,22 @@ import java.util.Locale;
 
 import in.turp.persistancetp.R;
 import in.turp.persistancetp.dao.DAO;
+import in.turp.persistancetp.dao.DatabaseHelper;
 import in.turp.persistancetp.data.Magasin;
 import in.turp.persistancetp.data.ReleveProduit;
 import in.turp.persistancetp.data.Visite;
 import in.turp.persistancetp.service.AuthService;
 import in.turp.persistancetp.service.ExportService;
 import in.turp.persistancetp.service.ImportService;
+import in.turp.persistancetp.service.data.VisiteSyncObject;
 import in.turp.persistancetp.util.DateTypeAdapter;
+import in.turp.persistancetp.util.SimpleDate;
+import in.turp.persistancetp.util.SimpleDateTypeAdapter;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.converter.GsonConverter;
+import retrofit.mime.TypedByteArray;
+import retrofit.mime.TypedInput;
 
 
 /**
@@ -297,6 +305,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     private <T> T getRestService(Class<T> klass) {
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .registerTypeAdapter(SimpleDate.class, new SimpleDateTypeAdapter())
                 .registerTypeAdapter(Date.class, new DateTypeAdapter())
                 .create();
 
@@ -335,13 +344,15 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         editor.putString(getString(R.string.access_token), token);
 
         // FIXME truc
-        /*
+        /*/
         DatabaseHelper helper = new DatabaseHelper(getApplicationContext());
         SQLiteDatabase db = helper.getWritableDatabase();
         helper.onUpgrade(db, 0, 0);
         /**/
 
-        String lastUpdate = prefs.getString(getString(R.string.last_update_key), "1901-01-01T00:00:00");
+        String lastUpdate =
+            /**/ prefs.getString(getString(R.string.last_update_key), "1901-01-01T00:00:00");
+            /*/ "1901-01-01T00:00:00"; /**/
         if(updateDatabase(lastUpdate, token)) {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd\'T\'hh:mm:ss", Locale.FRANCE);
             editor.putString(getString(R.string.last_update_key), format.format(new Date()));
@@ -370,39 +381,52 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             List<Visite> visites = visiteDAO.get("date_modification", ">", sqlLastUpdate);
             List<ReleveProduit> relevesProduit;
             int wid;
+            List<Visite> exportedVisites = new ArrayList<>();
 
             for (Visite visite : visites) {
-                if(visite.getWid() == Visite.WID_NEW) {
-                    visite.setWid(visite.getId());
-                }
-                if(visite.getWid() != Visite.WID_SYNC_ONCE) {
-                    visite.setId(0);
-                }
                 wid = visite.getWid();
-
-                visite = exportService.save(token, visite);
-
                 if(wid != Visite.WID_SYNC_ONCE) {
+                    wid = visite.getId();
+                }
+
+                visite = exportService.save(token, new VisiteSyncObject(visite));
+
+                // On conserve les visites nouvellement importées pour mettre à jour les liens avec
+                // les relevés pour l'export.
+                if(wid != Visite.WID_SYNC_ONCE) {
+                    visite.setWid(wid);
+                    exportedVisites.add(visite);
+                }
+            }
+
+            // On modifie les liens en partant de la fin pour éviter les conflits
+            for (int i = exportedVisites.size() - 1; i >= 0; --i) {
+                Visite visite = exportedVisites.get(i);
+
+                // Inutile de faire quoi que ce soit si l'ID n'a pas changé
+                if (visite.getWid() != visite.getId()) {
                     // Une requête SQL, des fois, c'est plus simple :'°
-                    relevesProduit = releveProduitDAO.get("visite", wid);
+                    relevesProduit = releveProduitDAO.get("visite", visite.getWid());
                     for (ReleveProduit releve : relevesProduit) {
                         releve.setVisite(visite.getId());
                         releveProduitDAO.save(releve);
                     }
 
+                    wid = visite.getWid();
                     visite.setWid(Visite.WID_SYNC_ONCE);
-                    visiteDAO.delete(wid);
+                    visiteDAO.save(visite, wid);
                 }
-                visiteDAO.save(visite);
             }
 
 
             relevesProduit = releveProduitDAO.get("date_modification", ">", sqlLastUpdate);
 
+            int oldId;
             for (ReleveProduit releveProduit : relevesProduit) {
                 if(releveProduit.getWid() == ReleveProduit.WID_NEW) {
                     releveProduit.setWid(releveProduit.getId());
                 }
+                oldId = releveProduit.getId();
                 if(releveProduit.getWid() != ReleveProduit.WID_SYNC_ONCE) {
                     releveProduit.setId(0);
                 }
@@ -412,10 +436,12 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
                 if(wid != ReleveProduit.WID_SYNC_ONCE) {
                     releveProduit.setWid(ReleveProduit.WID_SYNC_ONCE);
-                    releveProduitDAO.delete(wid);
+                }
+                if(oldId == 0) {
+                    oldId = releveProduit.getId();
                 }
 
-                releveProduitDAO.save(releveProduit);
+                releveProduitDAO.save(releveProduit, oldId);
             }
 
             // Import all data
@@ -432,7 +458,11 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         }
         catch (RetrofitError e) {
             // OK, retry later
-            e.printStackTrace();
+            TypedInput input = e.getResponse().getBody();
+            if(input instanceof TypedByteArray) {
+                String strInput = new String(((TypedByteArray) input).getBytes());
+                Log.i("WebService Error", strInput, e);
+            }
             return false;
         }
 

@@ -107,7 +107,7 @@ public class ReleveProduitActivity extends Activity implements View.OnClickListe
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                releve.setSupprime(true);
+                releve.setDeleted(true);
                 dao.save(releve);
                 goBack();
             }

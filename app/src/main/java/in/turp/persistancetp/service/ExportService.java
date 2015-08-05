@@ -5,6 +5,7 @@ import java.util.List;
 import in.turp.persistancetp.data.Magasin;
 import in.turp.persistancetp.data.ReleveProduit;
 import in.turp.persistancetp.data.Visite;
+import in.turp.persistancetp.service.data.VisiteSyncObject;
 import retrofit.http.Body;
 import retrofit.http.Header;
 import retrofit.http.PUT;
@@ -20,7 +21,7 @@ public interface ExportService {
      * @return La visite modifiée
      */
     @PUT("/commercial/visites/sync/")
-    Visite save(@Header("Authorization") String token, @Body Visite visite);
+    Visite save(@Header("Authorization") String token, @Body VisiteSyncObject visite);
 
     /**
      * Mettre l'ID à zéro pour ajouter un élément
@@ -28,7 +29,7 @@ public interface ExportService {
      * @param releveProduit Relevé produit modifiée
      * @return Le relevé modifiée
      */
-    @PUT("/commercial/releve_produit/sync/")
+    @PUT("/commercial/visite_releve_produit/sync/")
     ReleveProduit save(@Header("Authorization") String token, @Body ReleveProduit releveProduit);
 
     @PUT("/commercial/magasins/sync/")

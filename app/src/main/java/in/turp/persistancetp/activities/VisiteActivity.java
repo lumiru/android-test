@@ -119,7 +119,7 @@ public class VisiteActivity extends Activity implements View.OnClickListener {
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                visite.setSupprime(true);
+                visite.setDeleted(true);
                 dao.save(visite);
                 goBack();
             }

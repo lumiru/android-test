@@ -30,7 +30,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE IF NOT EXISTS visite (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "wid INTEGER," +
-                "supprime INTEGER," +
+                "deleted INTEGER," +
                 "date_creation TEXT," +
                 "date_modification TEXT," +
                 "date_visite TEXT," +
@@ -42,7 +42,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE IF NOT EXISTS releveproduit (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "wid INTEGER," +
-                "supprime INTEGER," +
+                "deleted INTEGER," +
                 "prix INTEGER," +
                 "prix_releve INTEGER," +
                 "facing INTEGER," +

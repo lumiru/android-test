@@ -21,7 +21,7 @@ public class ReleveProduit implements Data {
      */
     private int wid;
 
-    private boolean supprime;
+    private boolean deleted;
     private int prix;
     private int prixReleve;
     private int facing;
@@ -131,12 +131,16 @@ public class ReleveProduit implements Data {
         this.wid = wid;
     }
 
-    public boolean getSupprime() {
-        return supprime;
+    public boolean isDeleted() {
+        return deleted;
     }
 
-    public void setSupprime(boolean supprime) {
-        this.supprime = supprime;
+    public boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public Date getDateModification() {

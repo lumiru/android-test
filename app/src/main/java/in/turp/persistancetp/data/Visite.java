@@ -21,7 +21,7 @@ public class Visite implements Data {
      */
     private int wid;
 
-    private boolean supprime;
+    private boolean deleted;
     private Date dateCreation;
     private Date dateModification;
     private Date dateVisite;
@@ -71,6 +71,8 @@ public class Visite implements Data {
     public void setDateVisite(Date dateVisite) {
         this.dateVisite = dateVisite;
     }
+
+    public void setDate(Date date) { this.dateVisite = date; }
 
     public boolean getIsRealisee() {
         return isRealisee;
@@ -130,11 +132,11 @@ public class Visite implements Data {
         this.client = client.getId();
     }
 
-    public boolean getSupprime() {
-        return supprime;
+    public boolean getDeleted() {
+        return deleted;
     }
 
-    public void setSupprime(boolean supprime) {
-        this.supprime = supprime;
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }
